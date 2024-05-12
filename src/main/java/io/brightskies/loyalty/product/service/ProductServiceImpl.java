@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
             Product originalProduct = opProduct.get();
             product = mergeProducts(product, originalProduct);
 
-            return product;
+            return productRepo.save(product);
         }
     }
 
