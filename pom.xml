@@ -48,6 +48,13 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>10.8.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+			<version>10.8.1</version>
 		</dependency>
 
 		<dependency>
@@ -107,6 +114,17 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>10.8.1</version>
+				<configuration>
+					<url>${DB_URL}</url>
+					<user>${FLYWAY_USER}</user>
+					<password>${FLYWAY_PASSWORD}</password>
 				</configuration>
 			</plugin>
 		</plugins>
