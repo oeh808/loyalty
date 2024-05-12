@@ -5,7 +5,7 @@ import java.util.List;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 
 public interface PointsEntryService {
-    PointsEntry createPoints(PointsEntry pointsEntry);
+    PointsEntry createPointsEntry(PointsEntry pointsEntry);
 
     PointsEntry getPointsEntry(long id);
 

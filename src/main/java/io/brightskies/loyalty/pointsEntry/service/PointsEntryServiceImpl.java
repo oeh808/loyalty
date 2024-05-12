@@ -16,7 +16,7 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     }
 
     @Override
-    public PointsEntry createPoints(PointsEntry pointsEntry) {
+    public PointsEntry createPointsEntry(PointsEntry pointsEntry) {
         return pointsEntryRepo.save(pointsEntry);
     }
 
