@@ -1,4 +1,4 @@
-package io.brightskies.loyalty.points.entity.repo;
+package io.brightskies.loyalty.points.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
