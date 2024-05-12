@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class Refund {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @Embedded
     @ElementCollection

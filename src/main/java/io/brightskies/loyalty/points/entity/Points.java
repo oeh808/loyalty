@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class Points {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private int numOfPoints;
     private Date expiryDate;
 }
