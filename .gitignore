@@ -35,3 +35,9 @@ build/
 
 ### envs ###
 .env
+
+### yaml Files ###
+docker-compose.yaml
+
+### Private Migrations ###
+create.sql
