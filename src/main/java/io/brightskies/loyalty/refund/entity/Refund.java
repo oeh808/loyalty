@@ -1,5 +1,6 @@
 package io.brightskies.loyalty.refund.entity;
 
+import java.sql.Date;
 import java.util.List;
 
 import io.brightskies.loyalty.order.ProductsOrdered;
@@ -37,4 +38,6 @@ public class Refund {
     private int moneyRefunded;
 
     private int pointsRefunded;
+
+    private Date refundDate;
 }
