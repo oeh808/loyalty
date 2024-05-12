@@ -1,4 +1,4 @@
-package io.brightskies.loyalty.points.entity;
+package io.brightskies.loyalty.pointsEntry.entity;
 
 import java.util.Date;
 
@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Points")
-public class Points {
+@Table(name = "PointsEntries")
+public class PointsEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
