@@ -8,10 +8,10 @@ import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryExceptionMessages;
 import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 
-public class PointsEntryImpl implements PointsEntryService {
+public class PointsEntryServiceImpl implements PointsEntryService {
     private PointsEntryRepo pointsEntryRepo;
 
-    public PointsEntryImpl(PointsEntryRepo pointsEntryRepo) {
+    public PointsEntryServiceImpl(PointsEntryRepo pointsEntryRepo) {
         this.pointsEntryRepo = pointsEntryRepo;
     }
 
