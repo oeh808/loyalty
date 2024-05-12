@@ -1,7 +1,7 @@
 package io.brightskies.loyalty.order.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import io.brightskies.loyalty.customer.entity.Customer;
