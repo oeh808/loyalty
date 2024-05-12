@@ -3,11 +3,14 @@ package io.brightskies.loyalty.pointsEntry.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryExceptionMessages;
 import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 
+@Service
 public class PointsEntryServiceImpl implements PointsEntryService {
     private PointsEntryRepo pointsEntryRepo;
 
