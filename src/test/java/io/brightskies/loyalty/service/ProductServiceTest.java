@@ -77,7 +77,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void getProduct_RetrievesProductWithValidId() {
+    public void getProduct_RetrievesProductWhenGivenValidId() {
         assertEquals(product, productService.getProduct(product.getId()));
     }
 
