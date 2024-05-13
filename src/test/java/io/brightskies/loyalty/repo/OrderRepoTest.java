@@ -54,11 +54,11 @@ public class OrderRepoTest {
         pointsEntry = pointsEntryRepo.save(pointsEntry);
 
         order1.setCustomer(customer);
-        order1.setPointsEarned(pointsEntry);
+        order1.setPointsEntry(pointsEntry);
         order1 = orderRepo.save(order1);
 
         order2.setCustomer(customer);
-        order2.setPointsEarned(pointsEntry);
+        order2.setPointsEntry(pointsEntry);
         order2 = orderRepo.save(order2);
     }
 

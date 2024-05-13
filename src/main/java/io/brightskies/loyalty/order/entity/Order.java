@@ -48,5 +48,5 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pointsId")
     // Will end up changing if a refund is made on the order
-    private PointsEntry pointsEarned;
+    private PointsEntry pointsEntry;
 }
