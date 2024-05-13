@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 
         Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
         DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY);
-        PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, customer);
+        PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null);
 
         /*
          * If the customer tries to spend more points then they have,
@@ -60,16 +60,27 @@ public class OrderServiceImpl implements OrderService {
 
         // Redeeming points
         if (pointsSpent > 0) {
-
+            redeemPoints(pointsSpent, customer);
+            customer.setTotalPoints(customer.getTotalPoints() - pointsSpent);
         }
 
         // Acquiring points
         if (moneySpent > 0) {
-            pointsEntry.setNumOfPoints(calculatePointsEarned(productsOrdered, moneySpent, pointsSpent));
+            int pointsEarned = calculatePointsEarned(productsOrdered, moneySpent, pointsSpent);
+            customer.setTotalPoints(customer.getTotalPoints() + pointsEarned);
+
+            pointsEntry.setNumOfPoints(pointsEarned);
         }
 
-        // TODO: Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'placeOrder'");
+        // Saving the updated customer and points entry
+        customer = customerService.updateCustomerPointsTotal(customer.getId(), customer.getTotalPoints());
+        pointsEntry.setCustomer(customer);
+        pointsEntry = pointsEntryService.createPointsEntry(pointsEntry);
+
+        // Finally creating the order
+        Order order = new Order(0, productsOrdered, new Date(Calendar.getInstance().getTime().getTime()), moneySpent,
+                pointsSpent, customer, pointsEntry);
+        return orderRepo.save(order);
     }
 
     @Override
@@ -118,8 +129,23 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void redeemPoints(int pointsSpent, Customer customer) {
         List<PointsEntry> pointsEntries = pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer);
-        // TODO: Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'redeemPoints'");
+
+        for (PointsEntry pointsEntry : pointsEntries) {
+            // The loop keeps going until either all the point spent are accounted for,
+            // or every pointEntry is searched through
+            if (pointsSpent == 0) {
+                break;
+            }
+            int points = pointsEntry.getNumOfPoints();
+            if (pointsSpent >= points) {
+                pointsSpent -= points;
+                pointsEntryService.updatePointsInEntry(pointsEntry.getId(), 0);
+            } else {
+                points -= pointsSpent;
+                pointsSpent = 0;
+                pointsEntryService.updatePointsInEntry(pointsEntry.getId(), points);
+            }
+        }
     }
 
     @Override
