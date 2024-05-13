@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryExceptionMessages;
@@ -37,6 +38,11 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     @Override
     public List<PointsEntry> getAllPointsEntries() {
         return pointsEntryRepo.findAll();
+    }
+
+    @Override
+    public List<PointsEntry> getPointsEntriesByCustomer(Customer customer) {
+        return pointsEntryRepo.findByCustomerOrderByExpiryDateAsc(customer);
     }
 
     @Override

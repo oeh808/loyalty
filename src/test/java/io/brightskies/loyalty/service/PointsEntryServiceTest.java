@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryExceptionMessages;
@@ -50,13 +51,16 @@ public class PointsEntryServiceTest {
     @Autowired
     private PointsEntryService pointsEntryService;
 
+    private static Customer customer;
+
     private static PointsEntry pointsEntry;
 
     private static List<PointsEntry> pointsEntries;
 
     @BeforeAll
     public static void setUp() {
-        pointsEntry = new PointsEntry(1, 50, Date.valueOf("2030-04-20"), null);
+        customer = new Customer(1, null, 0);
+        pointsEntry = new PointsEntry(1, 50, Date.valueOf("2030-04-20"), customer);
 
         pointsEntries = new ArrayList<PointsEntry>();
         pointsEntries.add(pointsEntry);
@@ -70,6 +74,7 @@ public class PointsEntryServiceTest {
         when(pointsEntryRepo.findById(pointsEntry.getId() - 1)).thenReturn(Optional.empty());
 
         when(pointsEntryRepo.findAll()).thenReturn(pointsEntries);
+        when(pointsEntryRepo.findByCustomerOrderByExpiryDateAsc(customer)).thenReturn(pointsEntries);
     }
 
     @Test
@@ -98,9 +103,14 @@ public class PointsEntryServiceTest {
     }
 
     @Test
+    public void getPointsEntriesByCustomer_ReturnsAListOfPointEntriesGivenCustomer() {
+        assertEquals(pointsEntries, pointsEntryService.getPointsEntriesByCustomer(customer));
+    }
+
+    @Test
     public void updatePointsInEntry_ReturnsUpdatedPointEntryWhenGivenValidId() {
         PointsEntry expectedPointsEntry = new PointsEntry(pointsEntry.getId(), pointsEntry.getNumOfPoints() - 10,
-                pointsEntry.getExpiryDate(), null);
+                pointsEntry.getExpiryDate(), customer);
         when(pointsEntryRepo.save(expectedPointsEntry)).thenReturn(expectedPointsEntry);
 
         assertEquals(expectedPointsEntry,

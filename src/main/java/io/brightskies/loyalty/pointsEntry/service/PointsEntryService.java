@@ -2,6 +2,7 @@ package io.brightskies.loyalty.pointsEntry.service;
 
 import java.util.List;
 
+import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 
 public interface PointsEntryService {
@@ -10,6 +11,8 @@ public interface PointsEntryService {
     PointsEntry getPointsEntry(long id);
 
     List<PointsEntry> getAllPointsEntries();
+
+    List<PointsEntry> getPointsEntriesByCustomer(Customer customer);
 
     PointsEntry updatePointsInEntry(long id, int points);
 
