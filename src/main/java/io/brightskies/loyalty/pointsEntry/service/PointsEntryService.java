@@ -12,7 +12,7 @@ public interface PointsEntryService {
 
     List<PointsEntry> getAllPointsEntries();
 
-    List<PointsEntry> getPointsEntriesByCustomer(Customer customer);
+    List<PointsEntry> getNonExpiredPointsEntriesByCustomer(Customer customer);
 
     PointsEntry updatePointsInEntry(long id, int points);
 

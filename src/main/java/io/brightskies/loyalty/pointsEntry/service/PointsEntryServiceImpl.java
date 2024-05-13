@@ -1,5 +1,7 @@
 package io.brightskies.loyalty.pointsEntry.service;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +43,9 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     }
 
     @Override
-    public List<PointsEntry> getPointsEntriesByCustomer(Customer customer) {
-        return pointsEntryRepo.findByCustomerOrderByExpiryDateAsc(customer);
+    public List<PointsEntry> getNonExpiredPointsEntriesByCustomer(Customer customer) {
+        long today = Calendar.getInstance().getTimeInMillis();
+        return pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(customer, new Date(today));
     }
 
     @Override

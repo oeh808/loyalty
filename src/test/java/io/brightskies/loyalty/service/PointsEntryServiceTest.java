@@ -74,7 +74,8 @@ public class PointsEntryServiceTest {
         when(pointsEntryRepo.findById(pointsEntry.getId() - 1)).thenReturn(Optional.empty());
 
         when(pointsEntryRepo.findAll()).thenReturn(pointsEntries);
-        when(pointsEntryRepo.findByCustomerOrderByExpiryDateAsc(customer)).thenReturn(pointsEntries);
+        when(pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(any(Customer.class), any(Date.class)))
+                .thenReturn(pointsEntries);
     }
 
     @Test
@@ -104,7 +105,7 @@ public class PointsEntryServiceTest {
 
     @Test
     public void getPointsEntriesByCustomer_ReturnsAListOfPointEntriesGivenCustomer() {
-        assertEquals(pointsEntries, pointsEntryService.getPointsEntriesByCustomer(customer));
+        assertEquals(pointsEntries, pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer));
     }
 
     @Test

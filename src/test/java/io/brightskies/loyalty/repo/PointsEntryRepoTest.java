@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +34,9 @@ public class PointsEntryRepoTest {
     private static PointsEntry pointsEntry1;
     private static PointsEntry pointsEntry2;
     private static PointsEntry pointsEntry3;
+    private static PointsEntry pointsEntry4;
+
+    private static long today;
 
     @BeforeAll
     public static void setUp() {
@@ -43,6 +47,11 @@ public class PointsEntryRepoTest {
         pointsEntry1 = new PointsEntry(0, 150, Date.valueOf("2030-02-17"), null);
         pointsEntry2 = new PointsEntry(0, 50, Date.valueOf("2030-04-17"), null);
         pointsEntry3 = new PointsEntry(0, 50, Date.valueOf("2030-03-17"), null);
+
+        // Expired pointsEntry
+        pointsEntry4 = new PointsEntry(0, 50, Date.valueOf("2010-03-17"), null);
+
+        today = Calendar.getInstance().getTimeInMillis();
     }
 
     @BeforeEach
@@ -57,6 +66,9 @@ public class PointsEntryRepoTest {
 
         pointsEntry3.setCustomer(customer);
         pointsEntryRepo.save(pointsEntry3);
+
+        pointsEntry4.setCustomer(customer);
+        pointsEntryRepo.save(pointsEntry4);
     }
 
     @AfterEach
@@ -66,12 +78,13 @@ public class PointsEntryRepoTest {
     }
 
     @Test
-    public void findByCustomerOrderByExpiryDateAsc_ReturnsListOfPointEntriesInAscendingOrder() {
+    public void findNonExpiredPointsEntriesByCustomer_ReturnsListOfNonExpiredPointEntriesInAscendingOrder() {
         List<PointsEntry> sortedPointsEntries = new ArrayList<>();
         sortedPointsEntries.add(pointsEntry1);
         sortedPointsEntries.add(pointsEntry3);
         sortedPointsEntries.add(pointsEntry2);
 
-        assertEquals(sortedPointsEntries, pointsEntryRepo.findByCustomerOrderByExpiryDateAsc(customer));
+        assertEquals(sortedPointsEntries,
+                pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(customer, new Date(today)));
     }
 }
