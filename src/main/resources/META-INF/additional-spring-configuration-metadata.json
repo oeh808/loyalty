@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "monthsUntilPointsExpire",
+      "type": "java.lang.Integer",
+      "description": "An integer representing the number of months it takes before a points entry expires"
+    }
+  ]
+}
