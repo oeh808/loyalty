@@ -23,14 +23,14 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
-    //beans
-    //bcrypt bean definition
+    // beans
+    // bcrypt bean definition
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    //authenticationProvider bean definition
+    // authenticationProvider bean definition
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(UserService userService) {
@@ -45,26 +45,27 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-       /* http.cors();
-        http.csrf().disable();*/
-        http.authorizeHttpRequests(configurer ->
-                configurer
-                        .requestMatchers("/api/v1/me").hasRole("USER")
-                        .requestMatchers("/api/v1/users/**").hasRole("USER")
-                        // .requestMatchers( "/api/v1/test/admin").hasRole("ADMIN")  /api/v1/friends/request
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
-                        .requestMatchers("/error").permitAll()
+        /*
+         * http.cors();
+         * http.csrf().disable();
+         */
+        http.authorizeHttpRequests(configurer -> configurer
+                .requestMatchers("/api/v1/me").hasRole("USER")
+                .requestMatchers("/api/v1/users/**").hasRole("USER")
+                // .requestMatchers( "/api/v1/test/admin").hasRole("ADMIN")
+                // /api/v1/friends/request
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
+                .requestMatchers("/error").permitAll()
 
         );
 
         http.addFilterBefore(
                 jwtAuthFilter,
-                UsernamePasswordAuthenticationFilter.class
-        );
+                UsernamePasswordAuthenticationFilter.class);
 
         // use HTTP Basic authentication
         http.httpBasic(Customizer.withDefaults());
@@ -74,15 +75,18 @@ public class SecurityConfig {
 
         return http.build();
     }
-  /*  @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","DELETE"));
-        configuration.addAllowedHeader("*");
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }*/
+    /*
+     * @Bean
+     * CorsConfigurationSource corsConfigurationSource() {
+     * CorsConfiguration configuration = new CorsConfiguration();
+     * configuration.setAllowedOrigins(List.of("*"));
+     * configuration.setAllowedMethods(Arrays.asList("GET","POST","DELETE"));
+     * configuration.addAllowedHeader("*");
+     * UrlBasedCorsConfigurationSource source = new
+     * UrlBasedCorsConfigurationSource();
+     * source.registerCorsConfiguration("/**", configuration);
+     * return source;
+     * }
+     */
 
 }
