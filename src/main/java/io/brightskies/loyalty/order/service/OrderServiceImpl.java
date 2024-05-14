@@ -137,7 +137,11 @@ public class OrderServiceImpl implements OrderService {
                 break;
             }
             int points = pointsEntry.getNumOfPoints();
-            if (pointsSpent >= points) {
+            /*If the points entry has negative points, it is added to the pointsSpent.
+             * This is meant to set negative point entries back to 0 while increasing the 
+             * number of points to be redeemed from other entries
+             */
+            if (pointsSpent >= points || points < 0) {
                 pointsSpent -= points;
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), 0);
             } else {
