@@ -33,7 +33,7 @@ public class Order {
 
     @Embedded
     @ElementCollection
-    private List<OrderedProduct> productsOrdered = new ArrayList<OrderedProduct>();
+    private List<OrderedProduct> orderedProducts = new ArrayList<OrderedProduct>();
 
     private Date orderDate;
 

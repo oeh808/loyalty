@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order placeOrder(List<OrderedProduct> productsOrdered, float moneySpent, int pointsSpent,
+    public Order placeOrder(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent,
             String phoneNumber) {
         Customer customer;
         try {
@@ -66,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Acquiring points
         if (moneySpent > 0) {
-            int pointsEarned = calculatePointsEarned(productsOrdered, moneySpent, pointsSpent);
+            int pointsEarned = calculatePointsEarned(orderedProducts, moneySpent, pointsSpent);
             customer.setTotalPoints(customer.getTotalPoints() + pointsEarned);
 
             pointsEntry.setNumOfPoints(pointsEarned);
@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         pointsEntry = pointsEntryService.createPointsEntry(pointsEntry);
 
         // Finally creating the order
-        Order order = new Order(0, productsOrdered, new Date(Calendar.getInstance().getTime().getTime()), moneySpent,
+        Order order = new Order(0, orderedProducts, new Date(Calendar.getInstance().getTime().getTime()), moneySpent,
                 pointsSpent, customer, pointsEntry);
         return orderRepo.save(order);
     }
@@ -111,14 +111,14 @@ public class OrderServiceImpl implements OrderService {
      * Points are converted to money before this calculation is done
      */
     @Override
-    public int calculatePointsEarned(List<OrderedProduct> productsOrderedList, float moneySpent, int pointsSpent) {
+    public int calculatePointsEarned(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent) {
         float pointsConvertedToMoney = pointsSpent * PointsConstants.WORTH_OF_ONE_POINT;
         float ratioOfMoneySpent = moneySpent / (moneySpent + pointsConvertedToMoney);
 
         int pointsEarned = 0;
 
-        for (OrderedProduct productsOrdered : productsOrderedList) {
-            int productsPoints = productsOrdered.getProduct().getPointsValue() * productsOrdered.getQuantity();
+        for (OrderedProduct orderedProduct : orderedProducts) {
+            int productsPoints = orderedProduct.getProduct().getPointsValue() * orderedProduct.getQuantity();
 
             pointsEarned += productsPoints * ratioOfMoneySpent;
         }
