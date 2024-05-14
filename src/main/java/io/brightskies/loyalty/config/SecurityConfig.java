@@ -57,7 +57,7 @@ public class SecurityConfig {
                 // .requestMatchers( "/api/v1/test/admin").hasRole("ADMIN")
                 // /api/v1/friends/request
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
                 .requestMatchers("/error").permitAll()
 
