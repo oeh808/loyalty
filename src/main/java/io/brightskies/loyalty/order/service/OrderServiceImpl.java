@@ -11,7 +11,7 @@ import io.brightskies.loyalty.constants.PointsConstants;
 import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.customer.exception.CustomerException;
 import io.brightskies.loyalty.customer.service.CustomerService;
-import io.brightskies.loyalty.order.ProductsOrdered;
+import io.brightskies.loyalty.order.OrderedProduct;
 import io.brightskies.loyalty.order.entity.Order;
 import io.brightskies.loyalty.order.exception.OrderException;
 import io.brightskies.loyalty.order.exception.OrderExceptionMessages;
@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order placeOrder(List<ProductsOrdered> productsOrdered, float moneySpent, int pointsSpent,
+    public Order placeOrder(List<OrderedProduct> productsOrdered, float moneySpent, int pointsSpent,
             String phoneNumber) {
         Customer customer;
         try {
@@ -111,13 +111,13 @@ public class OrderServiceImpl implements OrderService {
      * Points are converted to money before this calculation is done
      */
     @Override
-    public int calculatePointsEarned(List<ProductsOrdered> productsOrderedList, float moneySpent, int pointsSpent) {
+    public int calculatePointsEarned(List<OrderedProduct> productsOrderedList, float moneySpent, int pointsSpent) {
         float pointsConvertedToMoney = pointsSpent * PointsConstants.WORTH_OF_ONE_POINT;
         float ratioOfMoneySpent = moneySpent / (moneySpent + pointsConvertedToMoney);
 
         int pointsEarned = 0;
 
-        for (ProductsOrdered productsOrdered : productsOrderedList) {
+        for (OrderedProduct productsOrdered : productsOrderedList) {
             int productsPoints = productsOrdered.getProduct().getPointsValue() * productsOrdered.getQuantity();
 
             pointsEarned += productsPoints * ratioOfMoneySpent;

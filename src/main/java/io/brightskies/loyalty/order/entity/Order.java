@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.util.List;
 
 import io.brightskies.loyalty.customer.entity.Customer;
-import io.brightskies.loyalty.order.ProductsOrdered;
+import io.brightskies.loyalty.order.OrderedProduct;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -33,7 +33,7 @@ public class Order {
 
     @Embedded
     @ElementCollection
-    private List<ProductsOrdered> productsOrdered = new ArrayList<ProductsOrdered>();
+    private List<OrderedProduct> productsOrdered = new ArrayList<OrderedProduct>();
 
     private Date orderDate;
 

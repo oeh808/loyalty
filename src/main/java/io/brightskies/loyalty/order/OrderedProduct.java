@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class ProductsOrdered {
+public class OrderedProduct {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")
     private Product product;

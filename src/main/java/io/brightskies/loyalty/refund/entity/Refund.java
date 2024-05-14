@@ -3,7 +3,7 @@ package io.brightskies.loyalty.refund.entity;
 import java.sql.Date;
 import java.util.List;
 
-import io.brightskies.loyalty.order.ProductsOrdered;
+import io.brightskies.loyalty.order.OrderedProduct;
 import io.brightskies.loyalty.order.entity.Order;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -29,7 +29,7 @@ public class Refund {
 
     @Embedded
     @ElementCollection
-    private List<ProductsOrdered> productsRefunded;
+    private List<OrderedProduct> productsRefunded;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId")
