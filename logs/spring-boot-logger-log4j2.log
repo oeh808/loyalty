@@ -1,0 +1,42 @@
+2024-05-15 10:34:34,762 INFO o.h.v.i.u.Version [background-preinit] HV000001: Hibernate Validator 8.0.1.Final
+2024-05-15 10:34:34,813 INFO o.s.b.StartupInfoLogger [restartedMain] Starting LoyaltyApplication using Java 21.0.1 with PID 24568 (C:\Users\omar\Desktop\Work\BrightSkies\Loyalty Project\loyalty\target\classes started by omar in C:\Users\omar\Desktop\Work\BrightSkies\Loyalty Project\loyalty)
+2024-05-15 10:34:34,817 DEBUG o.s.b.StartupInfoLogger [restartedMain] Running with Spring Boot v3.2.5, Spring v6.1.6
+2024-05-15 10:34:34,818 INFO o.s.b.SpringApplication [restartedMain] The following 1 profile is active: "dev"
+2024-05-15 10:34:34,859 INFO o.s.b.l.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-05-15 10:34:34,859 INFO o.s.b.l.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-05-15 10:34:35,536 INFO o.s.d.r.c.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-15 10:34:35,599 INFO o.s.d.r.c.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 56 ms. Found 7 JPA repository interfaces.
+2024-05-15 10:34:36,300 INFO o.s.b.w.e.t.TomcatWebServer [restartedMain] Tomcat initialized with port 8080 (http)
+2024-05-15 10:34:36,313 INFO o.a.j.l.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2024-05-15 10:34:36,314 INFO o.a.j.l.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2024-05-15 10:34:36,315 INFO o.a.j.l.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/10.1.20]
+2024-05-15 10:34:36,355 INFO o.a.j.l.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2024-05-15 10:34:36,356 INFO o.s.b.w.s.c.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 1495 ms
+2024-05-15 10:34:36,765 INFO c.z.h.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2024-05-15 10:34:37,089 INFO c.z.h.p.HikariPool [restartedMain] HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@21fccb95
+2024-05-15 10:34:37,091 INFO c.z.h.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2024-05-15 10:34:37,141 INFO o.f.c.i.l.s.Slf4jLog [restartedMain] Database: jdbc:mysql://host.docker.internal:3307/loyalty_program_db (MySQL 8.3)
+2024-05-15 10:34:37,188 WARN o.f.c.i.l.s.Slf4jLog [restartedMain] Flyway upgrade recommended: MySQL 8.3 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.
+2024-05-15 10:34:37,231 INFO o.f.c.i.l.s.Slf4jLog [restartedMain] Successfully validated 1 migration (execution time 00:00.033s)
+2024-05-15 10:34:37,253 INFO o.f.c.i.l.s.Slf4jLog [restartedMain] Current version of schema `loyalty_program_db`: 1.0
+2024-05-15 10:34:37,258 INFO o.f.c.i.l.s.Slf4jLog [restartedMain] Schema `loyalty_program_db` is up to date. No migration necessary.
+2024-05-15 10:34:37,416 INFO o.h.j.i.u.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-15 10:34:37,517 INFO o.h.Version [restartedMain] HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-15 10:34:37,558 INFO o.h.c.i.RegionFactoryInitiator [restartedMain] HHH000026: Second-level cache disabled
+2024-05-15 10:34:37,697 INFO o.s.o.j.p.SpringPersistenceUnitInfo [restartedMain] No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-15 10:34:37,990 WARN o.h.t.s.s.SchemaManagementToolCoordinator$ActionGrouping [restartedMain] HHH90000021: Encountered deprecated setting [javax.persistence.schema-generation.scripts.action], use [jakarta.persistence.schema-generation.scripts.action] instead
+2024-05-15 10:34:38,447 INFO o.h.e.t.j.p.i.JtaPlatformInitiator [restartedMain] HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-15 10:34:38,450 WARN o.h.t.s.s.SchemaManagementToolCoordinator$ActionGrouping [restartedMain] HHH90000021: Encountered deprecated setting [javax.persistence.schema-generation.scripts.action], use [jakarta.persistence.schema-generation.scripts.action] instead
+2024-05-15 10:34:38,453 WARN o.h.t.s.s.SchemaManagementToolCoordinator [restartedMain] HHH90000021: Encountered deprecated setting [jakarta.persistence.schema-generation.scripts.create-target], use [javax.persistence.schema-generation.scripts.create-target] instead
+2024-05-15 10:34:38,466 INFO o.s.o.j.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-15 10:34:38,711 DEBUG o.s.w.f.GenericFilterBean [restartedMain] Filter 'jwtAuthFilter' configured for use
+2024-05-15 10:34:38,757 INFO o.s.d.j.r.q.QueryEnhancerFactory [restartedMain] Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-15 10:34:39,365 WARN o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration [restartedMain] spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-05-15 10:34:39,696 INFO o.s.s.w.DefaultSecurityFilterChain [restartedMain] Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@f02a305, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6b691323, org.springframework.security.web.context.SecurityContextHolderFilter@4d8a52ae, org.springframework.security.web.header.HeaderWriterFilter@4f5ca2ad, org.springframework.web.filter.CorsFilter@1e62d0b6, org.springframework.security.web.authentication.logout.LogoutFilter@3aec421b, io.brightskies.loyalty.config.JwtAuthFilter@3201b6d5, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@37cee68, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4a596636, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7b2714c3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5e6a19eb, org.springframework.security.web.access.ExceptionTranslationFilter@5ba6c8a2, org.springframework.security.web.access.intercept.AuthorizationFilter@b2e69cc]
+2024-05-15 10:34:40,062 INFO o.s.b.d.a.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2024-05-15 10:34:40,077 INFO o.a.j.l.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2024-05-15 10:34:40,093 INFO o.s.b.w.e.t.TomcatWebServer [restartedMain] Tomcat started on port 8080 (http) with context path ''
+2024-05-15 10:34:40,102 INFO o.s.b.StartupInfoLogger [restartedMain] Started LoyaltyApplication in 5.677 seconds (process running for 6.315)
+2024-05-15 10:34:43,466 INFO o.s.o.j.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-15 10:34:43,469 INFO c.z.h.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2024-05-15 10:34:43,478 INFO c.z.h.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
