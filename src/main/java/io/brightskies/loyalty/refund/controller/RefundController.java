@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class RefundController {
     private RefundService refundService;
 
+    public RefundController(RefundService refundService) {
+        this.refundService = refundService;
+    }
+
     public Refund createRefund(ReFundDTO reFundDTO) {
         return refundService.createRefund(reFundDTO);
     }

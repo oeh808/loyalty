@@ -15,6 +15,7 @@ import io.brightskies.loyalty.refund.DTO.ReFundDTO;
 import io.brightskies.loyalty.refund.entity.Refund;
 import io.brightskies.loyalty.refund.repo.RefundRepo;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.Calendar;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class RefundServiceImpl implements RefundService {
     private OrderRepo orderRepo;
     private RefundRepo refundRepo;
