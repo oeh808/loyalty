@@ -86,8 +86,8 @@ public class OrderServiceTest {
 
     @BeforeAll
     public static void setUp() {
-        orderedProduct1 = new OrderedProduct(new Product(1, "Eggs", 60, 30), 2);
-        orderedProduct2 = new OrderedProduct(new Product(2, "Milk", 32, 16), 4);
+        orderedProduct1 = new OrderedProduct(new Product(1, "Eggs", 60, 30), 2, 0);
+        orderedProduct2 = new OrderedProduct(new Product(2, "Milk", 32, 16), 4, 0);
         orderedProducts = new ArrayList<>();
         orderedProducts.add(orderedProduct1);
         orderedProducts.add(orderedProduct2);
