@@ -18,4 +18,5 @@ public class OrderedProduct {
     @JoinColumn(name = "productId")
     private Product product;
     private int quantity;
+    private int refundedQuantity=0;
 }
