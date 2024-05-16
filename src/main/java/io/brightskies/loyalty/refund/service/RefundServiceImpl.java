@@ -14,7 +14,9 @@ import io.brightskies.loyalty.product.entity.Product;
 import io.brightskies.loyalty.refund.DTO.ReFundDTO;
 import io.brightskies.loyalty.refund.entity.Refund;
 import io.brightskies.loyalty.refund.repo.RefundRepo;
+import io.brightskies.loyalty.user.repository.RoleRepository;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.Calendar;
@@ -22,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@Service
 public class RefundServiceImpl implements RefundService {
     private OrderRepo orderRepo;
     private RefundRepo refundRepo;
@@ -31,7 +33,7 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Refund createRefund(ReFundDTO reFundDTO) {
-        // validation
+        //validation
 
         Customer customer;
         try {
@@ -46,46 +48,42 @@ public class RefundServiceImpl implements RefundService {
             throw new OrderException("Order not found");
         }
 
-        // chcek if the order is already refunded
+        //chcek if the order is already refunded
         List<OrderedProduct> orderedProducts = order.getOrderedProducts();
 
-        Set<Long> productIds = new HashSet<>();
-        List<Long> orderIDs = orderedProducts.stream().map(OrderedProduct::getProduct).map(Product::getId)
-                .collect(Collectors.toList());
+
+        List<Long> productIds = orderedProducts.stream().map(OrderedProduct::getProduct).map(Product::getId).collect(Collectors.toList());
         float totalRefundedMony = 0;
         int totalRefundedPoints = 0;
         for (OrderedProduct refundedProduct : reFundDTO.getOrderedProducts()) {
-            if (!orderIDs.contains(refundedProduct.getProduct().getId())) {
+            if (!productIds.contains(refundedProduct.getProduct().getId())) {
                 throw new OrderException("Product not found in order");
             }
             for (OrderedProduct orderedProduct : orderedProducts) {
 
-                if (refundedProduct.getProduct().getId() == orderedProduct.getProduct().getId() && refundedProduct
-                        .getQuantity() > (orderedProduct.getQuantity() - orderedProduct.getRefundedQuantity())) {
+                if (refundedProduct.getProduct().getId() == orderedProduct.getProduct().getId() && refundedProduct.getQuantity() > (orderedProduct.getQuantity() - orderedProduct.getRefundedQuantity())) {
                     throw new OrderException("Order already refunded");
-                } else {
-                    orderedProduct
-                            .setRefundedQuantity(orderedProduct.getRefundedQuantity() + refundedProduct.getQuantity());
+                }else if(refundedProduct.getProduct().getId() == orderedProduct.getProduct().getId()) {
+                    orderedProduct.setRefundedQuantity(orderedProduct.getRefundedQuantity() + refundedProduct.getQuantity());
                 }
             }
-            totalRefundedMony += (refundedProduct.getQuantity() * refundedProduct.getProduct().getPrice());
-            totalRefundedPoints += (refundedProduct.getQuantity() * refundedProduct.getProduct().getPointsValue());
+            totalRefundedMony +=  (refundedProduct.getQuantity()*refundedProduct.getProduct().getPrice());
+            totalRefundedPoints +=  (refundedProduct.getQuantity()*refundedProduct.getProduct().getPointsValue());
         }
 
-        // calculate refund amount
+        //calculate refund amount
         float moneyRefunded = 0;
         int pointsRefunded = 0;
-        if (order.getMoneySpent() > 0 && order.getPointsSpent() == 0) {
+        if(order.getMoneySpent() > 0&& order.getPointsSpent()== 0){
             moneyRefunded = totalRefundedMony;
-        } else if (order.getMoneySpent() == 0 && order.getPointsSpent() > 0) {
+        }else if(order.getMoneySpent() == 0&& order.getPointsSpent()>0) {
             pointsRefunded = (int) totalRefundedPoints;
-        } else {
-            int moneySpentPrecent = (int) (totalRefundedMony / (totalRefundedMony + totalRefundedPoints)
-                    * PointsConstants.WORTH_OF_ONE_POINT);
+        }else{
+            int moneySpentPrecent = (int) (totalRefundedMony / (totalRefundedMony +totalRefundedPoints) * PointsConstants.WORTH_OF_ONE_POINT);
             int pointsSpentPrecent = 100 - moneySpentPrecent;
 
-            moneyRefunded = totalRefundedMony * moneySpentPrecent / 100;
-            pointsRefunded = (int) totalRefundedPoints * pointsSpentPrecent / 100;
+            moneyRefunded = totalRefundedMony*moneySpentPrecent/100;
+            pointsRefunded = (int) totalRefundedPoints*pointsSpentPrecent/100;
         }
 
         Date RefundDate = new Date(Calendar.getInstance().getTime().getTime());
@@ -93,22 +91,22 @@ public class RefundServiceImpl implements RefundService {
         DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY);
         PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null);
 
-        // create refund
-        Refund refund = new Refund(customer, order, reFundDTO.getOrderedProducts(), moneyRefunded, pointsRefunded,
-                RefundDate);
+        //create refund
+        Refund refund = new Refund(customer, order, reFundDTO.getOrderedProducts(),moneyRefunded,pointsRefunded,RefundDate);
 
-        // update database
+        //update database
         refund = refundRepo.save(refund);
 
-        // update point
-        customer = customerService.updateCustomerPointsTotal(customer.getId(),
-                customer.getTotalPoints() + pointsRefunded);
+        //update point
+        customer = customerService.updateCustomerPointsTotal(customer.getId(), customer.getTotalPoints()+pointsRefunded);
         pointsEntry.setCustomer(customer);
         pointsEntry = pointsEntryService.createPointsEntry(pointsEntry);
-        // update order
+        //update order
 
         order.setOrderedProducts(orderedProducts);
         orderRepo.save(order);
+
+
 
         return refund;
     }
