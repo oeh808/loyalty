@@ -75,7 +75,7 @@ public class ProductServiceImpl implements ProductService {
      * fields they want to update.
      */
     private Product mergeProducts(Product updatedProduct, Product originalProduct) {
-        if (updatedProduct.getName() == null) {
+        if (updatedProduct.getName() == null || updatedProduct.getName() == "") {
             updatedProduct.setName(originalProduct.getName());
         }
         if (updatedProduct.getPrice() <= 0) {
