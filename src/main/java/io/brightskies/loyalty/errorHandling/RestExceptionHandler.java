@@ -16,15 +16,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ProductException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ProductException handleProductException(ProductException ex) {
-        return ex;
+    public ErrorResponse handleProductException(ProductException ex) {
+        return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(PointsEntryException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public PointsEntryException handlePointsEntryException(PointsEntryException ex) {
-        return ex;
+    public ErrorResponse handlePointsEntryException(PointsEntryException ex) {
+        return new ErrorResponse(ex.getMessage());
     }
 
 }
