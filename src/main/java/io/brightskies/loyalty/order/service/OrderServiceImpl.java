@@ -1,6 +1,7 @@
 package io.brightskies.loyalty.order.service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +60,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // Redeeming points
+        List<PointsEntry> pointsEntriesRedeemedFrom = new ArrayList<>();
         if (pointsSpent > 0) {
-            redeemPoints(pointsSpent, customer);
+            pointsEntriesRedeemedFrom = redeemPoints(pointsSpent, customer);
             customer.setTotalPoints(customer.getTotalPoints() - pointsSpent);
         }
 
@@ -79,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Finally creating the order
         Order order = new Order(0, orderedProducts, new Date(Calendar.getInstance().getTime().getTime()), moneySpent,
-                pointsSpent, customer, pointsEntry.getNumOfPoints());
+                pointsSpent, pointsEntriesRedeemedFrom, customer, pointsEntry.getNumOfPoints());
         return orderRepo.save(order);
     }
 
@@ -127,7 +129,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void redeemPoints(int pointsSpent, Customer customer) {
+    public List<PointsEntry> redeemPoints(int pointsSpent, Customer customer) {
+        List<PointsEntry> pointsEntriesRedeemedFrom = new ArrayList<>();
+
         List<PointsEntry> pointsEntries = pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer);
 
         for (PointsEntry pointsEntry : pointsEntries) {
@@ -142,15 +146,25 @@ public class OrderServiceImpl implements OrderService {
              * This is meant to set negative point entries back to 0 while increasing the
              * number of points to be redeemed from other entries
              */
-            if (pointsSpent >= points || points < 0) {
+            if (points == 0) {
+                continue;
+            } else if (pointsSpent >= points) {
                 pointsSpent -= points;
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), 0);
+
+                if (points > 0) {
+                    pointsEntriesRedeemedFrom.add(pointsEntry);
+                }
             } else {
                 points -= pointsSpent;
                 pointsSpent = 0;
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), points);
+
+                pointsEntriesRedeemedFrom.add(pointsEntry);
             }
         }
+
+        return pointsEntriesRedeemedFrom;
     }
 
     @Override

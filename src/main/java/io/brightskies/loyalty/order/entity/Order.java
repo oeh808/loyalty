@@ -6,6 +6,7 @@ import java.util.List;
 
 import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.order.OrderedProduct;
+import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -14,6 +15,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,6 +42,10 @@ public class Order {
     private float moneySpent;
 
     private int pointsSpent;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "pointEntriesRedeemedFrom", joinColumns = @JoinColumn(name = "orderId"), inverseJoinColumns = @JoinColumn(name = "pointsEntryId"))
+    private List<PointsEntry> entries;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerId")

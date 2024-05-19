@@ -45,6 +45,7 @@ import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
 import io.brightskies.loyalty.product.entity.Product;
 
+// FIXME: Update tests to include a test for verifying that pointEntriesRedeemedFrom works as expected
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class OrderServiceTest {
@@ -121,7 +122,7 @@ public class OrderServiceTest {
         when(customerService.updateCustomerPointsTotal(anyLong(), anyInt())).thenReturn(customer);
 
         // --- Order Repo ---
-        order = new Order(3, orderedProducts, Date.valueOf("2030-04-20"), 300, 300, customer, 0);
+        order = new Order(3, orderedProducts, Date.valueOf("2030-04-20"), 300, 300, null, customer, 0);
         orders = new ArrayList<>();
         orders.add(order);
 
@@ -176,7 +177,7 @@ public class OrderServiceTest {
 
         assertEquals(order.getMoneySpent(), newOrder.getMoneySpent());
         assertEquals(order.getPointsSpent(), newOrder.getPointsSpent());
-        verify(pointsEntryService,times(1)).createPointsEntry(any(PointsEntry.class));
+        verify(pointsEntryService, times(1)).createPointsEntry(any(PointsEntry.class));
         assertEquals(order.getCustomer(), newOrder.getCustomer());
         assertEquals(order.getOrderedProducts(), newOrder.getOrderedProducts());
     }

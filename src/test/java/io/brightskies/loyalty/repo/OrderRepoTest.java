@@ -35,8 +35,8 @@ public class OrderRepoTest {
     @BeforeAll
     public static void setUp() {
         customer = new Customer(0, "01002029938", 204);
-        order1 = new Order(0, null, Date.valueOf("2030-04-17"), 0, 0, null, 200);
-        order2 = new Order(0, null, Date.valueOf("2030-04-17"), 0, 0, null, 200);
+        order1 = new Order(0, null, Date.valueOf("2030-04-17"), 0, 0, null, null, 200);
+        order2 = new Order(0, null, Date.valueOf("2030-04-17"), 0, 0, null, null, 200);
     }
 
     @BeforeEach

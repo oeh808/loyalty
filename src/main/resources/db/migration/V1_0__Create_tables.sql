@@ -1,54 +1,63 @@
 create table customers (
-    id bigint not null auto_increment,
     total_points integer not null,
+    id bigint not null auto_increment,
     phone_number varchar(255),
     primary key (id)
 ) engine = InnoDB;
 
 create table order_ordered_products (
     quantity integer,
+    refunded_quantity integer,
     order_id bigint not null,
     product_id bigint
 ) engine = InnoDB;
 
 create table orders (
-    id bigint not null auto_increment,
     money_spent float(23) not null,
     order_date date,
+    points_earned integer not null,
     points_spent integer not null,
     customer_id bigint,
-    points_id bigint,
+    id bigint not null auto_increment,
     primary key (id)
 ) engine = InnoDB;
 
+create table point_entries_redeemed_from (
+    order_id bigint not null,
+    points_entry_id bigint not null
+) engine = InnoDB;
+
 create table points_entries (
-    id bigint not null auto_increment,
+    expired bit not null,
     expiry_date date,
     num_of_points integer not null,
     customer_id bigint,
+    id bigint not null auto_increment,
     primary key (id)
 ) engine = InnoDB;
 
 create table products (
-    id bigint not null auto_increment,
     points_value integer not null,
     price float(23) not null,
+    id bigint not null auto_increment,
     name varchar(255),
     primary key (id)
 ) engine = InnoDB;
 
 create table refund (
-    id bigint not null auto_increment,
-    money_refunded integer not null,
+    money_refunded float(23) not null,
     points_refunded integer not null,
     refund_date date,
+    customer_id bigint,
+    id bigint not null auto_increment,
     order_id bigint,
     primary key (id)
 ) engine = InnoDB;
 
 create table refund_products_refunded (
-    product_id bigint,
     quantity integer,
+    refunded_quantity integer,
+    product_id bigint,
     refund_id bigint not null
 ) engine = InnoDB;
 
@@ -96,11 +105,17 @@ add constraint FKmf6kldeopcy45loy2lspv261o foreign key (order_id) references ord
 alter table orders
 add constraint FKpxtb8awmi0dk6smoh2vp1litg foreign key (customer_id) references customers (id);
 
-alter table orders
-add constraint FK9l46nrijc8fwfxw4xnjo8grxm foreign key (points_id) references points_entries (id);
+alter table point_entries_redeemed_from
+add constraint FK7r1p8loevu22rm7esjqa3r028 foreign key (points_entry_id) references points_entries (id);
+
+alter table point_entries_redeemed_from
+add constraint FK1a21m59s1afw0kvqgotq1qxxv foreign key (order_id) references orders (id);
 
 alter table points_entries
 add constraint FKcc1sxxrh25nkss7gaj8kr773s foreign key (customer_id) references customers (id);
+
+alter table refund
+add constraint FKccb5llyotysli10gu3d2vckjt foreign key (customer_id) references customers (id);
 
 alter table refund
 add constraint FK80vls36avhp4yl7h8apkqm0ek foreign key (order_id) references orders (id);
