@@ -54,11 +54,14 @@ public class SecurityConfig {
         http.authorizeHttpRequests(configurer -> configurer
                 .requestMatchers("/api/v1/me").hasRole("USER")
                 .requestMatchers("/api/v1/users/**").hasRole("USER")
+                .requestMatchers("products/**").hasRole("USER")
                 // .requestMatchers( "/api/v1/test/admin").hasRole("ADMIN")
                 // /api/v1/friends/request
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
+                // FIXME: Replace below request matcher with requiring API Key
+                .requestMatchers("/orders/**").permitAll()
                 .requestMatchers("/error").permitAll()
 
         );
