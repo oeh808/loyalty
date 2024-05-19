@@ -10,6 +10,7 @@ import io.brightskies.loyalty.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @Tag(name = "Products", description = "Controller for handling mappings for products")
+@SecurityRequirement(name = "Bearer Token")
 @RequestMapping("/products")
 public class ProductController {
         private ProductService productService;
