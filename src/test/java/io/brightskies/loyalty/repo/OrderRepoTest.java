@@ -41,7 +41,7 @@ public class OrderRepoTest {
     @BeforeAll
     public static void setUp() {
         customer = new Customer(0, "01002029938", 204);
-        pointsEntry = new PointsEntry(0, 200, Date.valueOf("2030-06-17"), null);
+        pointsEntry = new PointsEntry(0, 200, Date.valueOf("2030-06-17"), null, false);
         order1 = new Order(0, null, Date.valueOf("2030-04-17"), 0, 0, null, null);
         order2 = new Order(0, null, Date.valueOf("2030-04-17"), 0, 0, null, null);
     }

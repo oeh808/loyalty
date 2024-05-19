@@ -29,4 +29,5 @@ public class PointsEntry {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerId")
     private Customer customer;
+    private boolean expired;
 }

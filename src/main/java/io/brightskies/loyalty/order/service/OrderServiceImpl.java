@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 
         Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
         DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY);
-        PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null);
+        PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null, false);
 
         /*
          * If the customer tries to spend more points then they have,
@@ -137,8 +137,9 @@ public class OrderServiceImpl implements OrderService {
                 break;
             }
             int points = pointsEntry.getNumOfPoints();
-            /*If the points entry has negative points, it is added to the pointsSpent.
-             * This is meant to set negative point entries back to 0 while increasing the 
+            /*
+             * If the points entry has negative points, it is added to the pointsSpent.
+             * This is meant to set negative point entries back to 0 while increasing the
              * number of points to be redeemed from other entries
              */
             if (pointsSpent >= points || points < 0) {

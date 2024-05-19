@@ -96,10 +96,10 @@ public class OrderServiceTest {
     @BeforeEach
     public void setUpMocks() {
         // --- PointsEntry Service ---
-        pointsEntry1 = new PointsEntry(1, 150, Date.valueOf("2030-05-20"), customer);
-        pointsEntry2 = new PointsEntry(2, 350, Date.valueOf("2030-06-20"), customer);
+        pointsEntry1 = new PointsEntry(1, 150, Date.valueOf("2030-05-20"), customer, false);
+        pointsEntry2 = new PointsEntry(2, 350, Date.valueOf("2030-06-20"), customer, false);
         // Negative points entry not added to list except in specific tests
-        negativePointsEntry = new PointsEntry(3, -50, Date.valueOf("2030-05-19"), customer);
+        negativePointsEntry = new PointsEntry(3, -50, Date.valueOf("2030-05-19"), customer, false);
 
         pointsEntries = new ArrayList<>();
         pointsEntries.add(pointsEntry1);

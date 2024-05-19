@@ -60,7 +60,7 @@ public class PointsEntryServiceTest {
     @BeforeAll
     public static void setUp() {
         customer = new Customer(1, null, 0);
-        pointsEntry = new PointsEntry(1, 50, Date.valueOf("2030-04-20"), customer);
+        pointsEntry = new PointsEntry(1, 50, Date.valueOf("2030-04-20"), customer, false);
 
         pointsEntries = new ArrayList<PointsEntry>();
         pointsEntries.add(pointsEntry);
@@ -111,7 +111,7 @@ public class PointsEntryServiceTest {
     @Test
     public void updatePointsInEntry_ReturnsUpdatedPointEntryWhenGivenValidId() {
         PointsEntry expectedPointsEntry = new PointsEntry(pointsEntry.getId(), pointsEntry.getNumOfPoints() - 10,
-                pointsEntry.getExpiryDate(), customer);
+                pointsEntry.getExpiryDate(), customer, false);
         when(pointsEntryRepo.save(expectedPointsEntry)).thenReturn(expectedPointsEntry);
 
         assertEquals(expectedPointsEntry,

@@ -44,12 +44,12 @@ public class PointsEntryRepoTest {
 
         // Expiration dates hierarchy from first to expire to last to expire:
         // pointsEntry1 -> pointsEntry3 -> pointsEntry2
-        pointsEntry1 = new PointsEntry(0, 150, Date.valueOf("2030-02-17"), null);
-        pointsEntry2 = new PointsEntry(0, 50, Date.valueOf("2030-04-17"), null);
-        pointsEntry3 = new PointsEntry(0, 50, Date.valueOf("2030-03-17"), null);
+        pointsEntry1 = new PointsEntry(0, 150, Date.valueOf("2030-02-17"), null, false);
+        pointsEntry2 = new PointsEntry(0, 50, Date.valueOf("2030-04-17"), null, false);
+        pointsEntry3 = new PointsEntry(0, 50, Date.valueOf("2030-03-17"), null, false);
 
         // Expired pointsEntry
-        pointsEntry4 = new PointsEntry(0, 50, Date.valueOf("2010-03-17"), null);
+        pointsEntry4 = new PointsEntry(0, 50, Date.valueOf("2010-03-17"), null, true);
 
         today = Calendar.getInstance().getTimeInMillis();
     }
