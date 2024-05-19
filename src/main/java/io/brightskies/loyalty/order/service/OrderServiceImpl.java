@@ -20,23 +20,32 @@ import io.brightskies.loyalty.order.exception.OrderExceptionMessages;
 import io.brightskies.loyalty.order.repo.OrderRepo;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
+import io.brightskies.loyalty.product.exception.ProductException;
+import io.brightskies.loyalty.product.exception.ProductExceptionMessages;
+import io.brightskies.loyalty.product.service.ProductService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
     private OrderRepo orderRepo;
     private CustomerService customerService;
     private PointsEntryService pointsEntryService;
+    private ProductService productService;
 
     public OrderServiceImpl(OrderRepo orderRepo, CustomerService customerService,
-            PointsEntryService pointsEntryService) {
+            PointsEntryService pointsEntryService, ProductService productService) {
         this.orderRepo = orderRepo;
         this.customerService = customerService;
         this.pointsEntryService = pointsEntryService;
+        this.productService = productService;
     }
 
     @Override
     public Order placeOrder(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent,
             String phoneNumber) {
+        if (!productsExist(orderedProducts)) {
+            throw new ProductException(ProductExceptionMessages.PRODUCT_NOT_FOUND);
+        }
+
         Customer customer;
         try {
             customer = customerService.getCustomer(phoneNumber);
@@ -177,5 +186,17 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new OrderException(OrderExceptionMessages.ORDER_NOT_FOUND);
         }
+    }
+
+    // --- Helper functions ---
+    private boolean productsExist(List<OrderedProduct> orderedProducts) {
+        for (OrderedProduct orderedProduct : orderedProducts) {
+            try {
+                productService.getProduct(orderedProduct.getProduct().getId());
+            } catch (ProductException e) {
+                return false;
+            }
+        }
+        return true;
     }
 }

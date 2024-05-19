@@ -44,8 +44,10 @@ import io.brightskies.loyalty.order.service.OrderServiceImpl;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
 import io.brightskies.loyalty.product.entity.Product;
+import io.brightskies.loyalty.product.service.ProductService;
 
 // FIXME: Update tests to include a test for verifying that pointEntriesRedeemedFrom works as expected
+// FIXME: Update tests to include a test for verifying that invalid products throw an error
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class OrderServiceTest {
@@ -54,8 +56,8 @@ public class OrderServiceTest {
         @Bean
         @Autowired
         OrderService service(OrderRepo orderRepo, CustomerService customerService,
-                PointsEntryService pointsEntryService) {
-            return new OrderServiceImpl(orderRepo, customerService, pointsEntryService);
+                PointsEntryService pointsEntryService, ProductService productService) {
+            return new OrderServiceImpl(orderRepo, customerService, pointsEntryService, productService);
         }
     }
 
@@ -67,6 +69,9 @@ public class OrderServiceTest {
 
     @MockBean
     private PointsEntryService pointsEntryService;
+
+    @MockBean
+    private ProductService productService;
 
     @Autowired
     private OrderService orderService;
