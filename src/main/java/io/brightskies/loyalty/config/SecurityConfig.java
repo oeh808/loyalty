@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final ApiKeyAuthFilter apiKeyAuthFilter;
 
     // beans
     // bcrypt bean definition
@@ -45,37 +46,30 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         /*
          * http.cors();
          * http.csrf().disable();
          */
+        http
+                .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         http.authorizeHttpRequests(configurer -> configurer
                 .requestMatchers("/api/v1/me").hasRole("USER")
                 .requestMatchers("/api/v1/users/**").hasRole("USER")
-                .requestMatchers("products/**").hasRole("USER")
-                // .requestMatchers( "/api/v1/test/admin").hasRole("ADMIN")
-                // /api/v1/friends/request
+                .requestMatchers("/products/**").hasRole("USER")
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
-                // FIXME: Replace below request matcher with requiring API Key
-                .requestMatchers("/orders/**").permitAll()
+                .requestMatchers("/orders/**").authenticated()
                 .requestMatchers("/error").permitAll()
-
         );
-
-        http.addFilterBefore(
-                jwtAuthFilter,
-                UsernamePasswordAuthenticationFilter.class);
-
-        // use HTTP Basic authentication
+        http
+                .csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(Customizer.withDefaults());
-
-        // disable Cross Site Request Forgery (CSRF)
-        http.csrf(AbstractHttpConfigurer::disable);
-
         return http.build();
     }
     /*
