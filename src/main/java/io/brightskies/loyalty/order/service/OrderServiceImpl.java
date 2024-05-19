@@ -59,7 +59,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
-        DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY);
+        System.out.println(PointsConstants.MONTHS_UNTIL_EXPIRY);
+        pointsExpiryDate = new Date(
+                DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY).getTime());
         PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null, false);
 
         /*
