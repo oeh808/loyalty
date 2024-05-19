@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.brightskies.loyalty.order.dtos.OrderCreationDto;
+import io.brightskies.loyalty.order.dtos.OrderReadingDto;
 import io.brightskies.loyalty.order.entity.Order;
+import io.brightskies.loyalty.order.mapper.OrderMapper;
 import io.brightskies.loyalty.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,9 +28,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/orders")
 public class OrderController {
         private OrderService orderService;
+        private OrderMapper orderMapper;
 
-        public OrderController(OrderService orderService) {
+        public OrderController(OrderService orderService, OrderMapper orderMapper) {
                 this.orderService = orderService;
+                this.orderMapper = orderMapper;
         }
 
         @Operation(description = "POST endpoint for creating an order" +
@@ -43,24 +47,24 @@ public class OrderController {
         @Operation(description = "GET endpoint for retrieving a single order given its id" +
                         "\n\n Returns an instance of type order.", summary = "Get Single Order")
         @GetMapping("/{id}")
-        public Order getSingleOrder(
+        public OrderReadingDto getSingleOrder(
                         @Parameter(in = ParameterIn.PATH, name = "id", description = "Order ID") @PathVariable long id) {
-                return orderService.getOrder(id);
+                return orderMapper.toDto(orderService.getOrder(id));
         }
 
         @Operation(description = "GET endpoint for retrieving ALL orders" +
                         "\n\n Returns a list of orders.", summary = "Get All Orders")
         @GetMapping()
-        public List<Order> getAllOrders() {
-                return orderService.getAllOrders();
+        public List<OrderReadingDto> getAllOrders() {
+                return orderMapper.toDtos(orderService.getAllOrders());
         }
 
         @Operation(description = "GET endpoint for retrieving all orders associated with a customer's phone number" +
                         "\n\n Returns a list of orders.", summary = "Get Customer's Orders")
         @GetMapping("/customerOrders/{phoneNumber}")
-        public List<Order> getAllOrdersFromCustomer(
+        public List<OrderReadingDto> getAllOrdersFromCustomer(
                         @Parameter(in = ParameterIn.PATH, name = "phoneNumber", description = "Phone Number") @PathVariable String phoneNumber) {
-                return orderService.getOrdersByCustomer(phoneNumber);
+                return orderMapper.toDtos(orderService.getOrdersByCustomer(phoneNumber));
         }
 
         @Operation(description = "DELETE endpoint for deleting a single order given its id" +
