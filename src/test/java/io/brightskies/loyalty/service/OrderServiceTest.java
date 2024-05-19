@@ -121,7 +121,7 @@ public class OrderServiceTest {
         when(customerService.updateCustomerPointsTotal(anyLong(), anyInt())).thenReturn(customer);
 
         // --- Order Repo ---
-        order = new Order(3, orderedProducts, Date.valueOf("2030-04-20"), 300, 300, customer, null);
+        order = new Order(3, orderedProducts, Date.valueOf("2030-04-20"), 300, 300, customer, 0);
         orders = new ArrayList<>();
         orders.add(order);
 
@@ -171,13 +171,12 @@ public class OrderServiceTest {
 
     @Test
     public void placeOrder_ReturnsCreatedOrderAndUpdatesCustomerAndPointEntry() {
-        order.setPointsEntry(pointsEntry1);
         Order newOrder = orderService.placeOrder(orderedProducts, order.getMoneySpent(), order.getPointsSpent(),
                 customer.getPhoneNumber());
 
         assertEquals(order.getMoneySpent(), newOrder.getMoneySpent());
         assertEquals(order.getPointsSpent(), newOrder.getPointsSpent());
-        assertEquals(order.getPointsEntry(), newOrder.getPointsEntry());
+        verify(pointsEntryService,times(1)).createPointsEntry(any(PointsEntry.class));
         assertEquals(order.getCustomer(), newOrder.getCustomer());
         assertEquals(order.getOrderedProducts(), newOrder.getOrderedProducts());
     }

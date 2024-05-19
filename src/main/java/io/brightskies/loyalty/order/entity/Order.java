@@ -6,7 +6,6 @@ import java.util.List;
 
 import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.order.OrderedProduct;
-import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -45,8 +44,5 @@ public class Order {
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pointsId")
-    // Will end up changing if a refund is made on the order
-    private PointsEntry pointsEntry;
+    private int pointsEarned;
 }

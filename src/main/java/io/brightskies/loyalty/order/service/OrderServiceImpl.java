@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Finally creating the order
         Order order = new Order(0, orderedProducts, new Date(Calendar.getInstance().getTime().getTime()), moneySpent,
-                pointsSpent, customer, pointsEntry);
+                pointsSpent, customer, pointsEntry.getNumOfPoints());
         return orderRepo.save(order);
     }
 
