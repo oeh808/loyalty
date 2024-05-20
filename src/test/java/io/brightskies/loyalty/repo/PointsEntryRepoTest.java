@@ -59,16 +59,16 @@ public class PointsEntryRepoTest {
         customer = customerRepo.save(customer);
 
         pointsEntry1.setCustomer(customer);
-        pointsEntryRepo.save(pointsEntry1);
+        pointsEntry1 = pointsEntryRepo.save(pointsEntry1);
 
         pointsEntry2.setCustomer(customer);
-        pointsEntryRepo.save(pointsEntry2);
+        pointsEntry2 = pointsEntryRepo.save(pointsEntry2);
 
         pointsEntry3.setCustomer(customer);
-        pointsEntryRepo.save(pointsEntry3);
+        pointsEntry3 = pointsEntryRepo.save(pointsEntry3);
 
         pointsEntry4.setCustomer(customer);
-        pointsEntryRepo.save(pointsEntry4);
+        pointsEntry4 = pointsEntryRepo.save(pointsEntry4);
     }
 
     @AfterEach
