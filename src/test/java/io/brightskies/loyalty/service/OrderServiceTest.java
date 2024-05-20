@@ -56,8 +56,9 @@ public class OrderServiceTest {
         @Bean
         @Autowired
         OrderService service(OrderRepo orderRepo, CustomerService customerService,
-                PointsEntryService pointsEntryService, ProductService productService) {
-            return new OrderServiceImpl(orderRepo, customerService, pointsEntryService, productService);
+                PointsEntryService pointsEntryService, ProductService productService, PointsConstants pointsConstants) {
+            return new OrderServiceImpl(orderRepo, customerService, pointsEntryService, productService,
+                    pointsConstants);
         }
     }
 
@@ -72,6 +73,9 @@ public class OrderServiceTest {
 
     @MockBean
     private ProductService productService;
+
+    @MockBean
+    private PointsConstants pointsConstants;
 
     @Autowired
     private OrderService orderService;
@@ -213,7 +217,7 @@ public class OrderServiceTest {
 
     @Test
     public void calculatePointsEarned_ReturnsCorrectCalculation() {
-        float pointsConvertedToMoney = order.getPointsSpent() * PointsConstants.WORTH_OF_ONE_POINT;
+        float pointsConvertedToMoney = order.getPointsSpent() * pointsConstants.WORTH_OF_ONE_POINT;
         float moneySpentRatio = order.getMoneySpent() / (order.getMoneySpent() + pointsConvertedToMoney);
 
         int expectedPoints = 0;

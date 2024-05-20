@@ -30,13 +30,15 @@ public class OrderServiceImpl implements OrderService {
     private CustomerService customerService;
     private PointsEntryService pointsEntryService;
     private ProductService productService;
+    private PointsConstants pointsConstants;
 
     public OrderServiceImpl(OrderRepo orderRepo, CustomerService customerService,
-            PointsEntryService pointsEntryService, ProductService productService) {
+            PointsEntryService pointsEntryService, ProductService productService, PointsConstants pointsConstants) {
         this.orderRepo = orderRepo;
         this.customerService = customerService;
         this.pointsEntryService = pointsEntryService;
         this.productService = productService;
+        this.pointsConstants = pointsConstants;
     }
 
     @Override
@@ -59,9 +61,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
-        System.out.println(PointsConstants.MONTHS_UNTIL_EXPIRY);
+        System.out.println(pointsConstants.MONTHS_UNTIL_EXPIRY);
         pointsExpiryDate = new Date(
-                DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY).getTime());
+                DateUtils.addMonths(pointsExpiryDate, pointsConstants.MONTHS_UNTIL_EXPIRY).getTime());
         PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null, false);
 
         /*
@@ -127,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public int calculatePointsEarned(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent) {
-        float pointsConvertedToMoney = pointsSpent * PointsConstants.WORTH_OF_ONE_POINT;
+        float pointsConvertedToMoney = pointsSpent * pointsConstants.WORTH_OF_ONE_POINT;
         float ratioOfMoneySpent = moneySpent / (moneySpent + pointsConvertedToMoney);
 
         int pointsEarned = 0;

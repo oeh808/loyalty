@@ -15,6 +15,7 @@ import io.brightskies.loyalty.refund.DTO.ReFundDTO;
 import io.brightskies.loyalty.refund.entity.Refund;
 import io.brightskies.loyalty.refund.repo.RefundRepo;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -28,6 +29,9 @@ public class RefundServiceImpl implements RefundService {
     private RefundRepo refundRepo;
     private CustomerService customerService;
     private PointsEntryService pointsEntryService;
+
+    @Autowired
+    private PointsConstants pointsConstants;
 
     @Override
     public Refund createRefund(ReFundDTO reFundDTO) {
@@ -80,7 +84,7 @@ public class RefundServiceImpl implements RefundService {
             pointsRefunded = (int) totalRefundedPoints;
         } else {
             int moneySpentPrecent = (int) (totalRefundedMony / (totalRefundedMony + totalRefundedPoints)
-                    * PointsConstants.WORTH_OF_ONE_POINT);
+                    * pointsConstants.WORTH_OF_ONE_POINT);
             int pointsSpentPrecent = 100 - moneySpentPrecent;
 
             moneyRefunded = totalRefundedMony * moneySpentPrecent / 100;
@@ -89,7 +93,7 @@ public class RefundServiceImpl implements RefundService {
 
         Date RefundDate = new Date(Calendar.getInstance().getTime().getTime());
         Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
-        DateUtils.addMonths(pointsExpiryDate, PointsConstants.MONTHS_UNTIL_EXPIRY);
+        DateUtils.addMonths(pointsExpiryDate, pointsConstants.MONTHS_UNTIL_EXPIRY);
         PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null, false);
 
         // create refund
