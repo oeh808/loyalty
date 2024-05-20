@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.brightskies.loyalty.customer.exception.CustomerException;
+import io.brightskies.loyalty.user.exception.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -45,6 +47,26 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorResponse handleOrderException(OrderException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+    @ExceptionHandler(CustomerException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleCustomerException(CustomerException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleResourceNotFoundException(CustomerException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleOtherException(CustomerException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
