@@ -95,7 +95,7 @@ public class PointsEntryRepoTest {
         sortedPointsEntries.add(pointsEntry2);
 
         assertEquals(sortedPointsEntries,
-                pointsEntryRepo.findByExpiryDateBetweenOrderByExpiryDateAsc(pointsEntry3.getExpiryDate(),
+                pointsEntryRepo.findByExpiryDateBetweenDatesByCustomer(customer, pointsEntry3.getExpiryDate(),
                         pointsEntry2.getExpiryDate()));
     }
 }

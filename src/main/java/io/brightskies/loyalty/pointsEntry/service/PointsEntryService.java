@@ -14,7 +14,7 @@ public interface PointsEntryService {
 
     List<PointsEntry> getNonExpiredPointsEntriesByCustomer(Customer customer);
 
-    List<PointsEntry> getSoonToExpirePointsEntries();
+    List<PointsEntry> getSoonToExpirePointsEntries(Customer customer);
 
     PointsEntry updatePointsInEntry(long id, int points);
 

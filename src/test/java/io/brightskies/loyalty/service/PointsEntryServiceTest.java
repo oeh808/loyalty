@@ -77,7 +77,8 @@ public class PointsEntryServiceTest {
         when(pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(any(Customer.class), any(Date.class)))
                 .thenReturn(pointsEntries);
 
-        when(pointsEntryRepo.findByExpiryDateBetweenOrderByExpiryDateAsc(any(Date.class), any(Date.class)))
+        when(pointsEntryRepo.findByExpiryDateBetweenDatesByCustomer(any(Customer.class), any(Date.class),
+                any(Date.class)))
                 .thenReturn(new ArrayList<PointsEntry>());
     }
 
@@ -135,7 +136,7 @@ public class PointsEntryServiceTest {
 
     @Test
     public void getSoonToExpirePointsEntries_ReturnsEmptyListWhenNothingExpiresSoon() {
-        List<PointsEntry> pointsEntries = pointsEntryService.getSoonToExpirePointsEntries();
+        List<PointsEntry> pointsEntries = pointsEntryService.getSoonToExpirePointsEntries(customer);
 
         assertEquals(0, pointsEntries.size());
     }
