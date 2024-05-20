@@ -34,7 +34,7 @@ public class Refund {
 
     @Embedded
     @ElementCollection
-    private List<OrderedProduct> productsRefunded;
+    private List<RefundedProduct> productsRefunded;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId")
@@ -46,12 +46,5 @@ public class Refund {
 
     private Date refundDate;
 
-    public Refund(Customer customer, Order order, List<OrderedProduct> orderedProducts, float moneyRefunded, int pointsRefunded, Date date) {
-        this.customer = customer;
-        this.order = order;
-        this.productsRefunded = orderedProducts;
-        this.moneyRefunded = moneyRefunded;
-        this.pointsRefunded = pointsRefunded;
-        this.refundDate = date;
-    }
+
 }
