@@ -33,7 +33,6 @@ import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryServiceImpl;
 
-//FIXME: Add test for getSoonToExpirePointsEntries
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class PointsEntryServiceTest {
@@ -77,6 +76,9 @@ public class PointsEntryServiceTest {
         when(pointsEntryRepo.findAll()).thenReturn(pointsEntries);
         when(pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(any(Customer.class), any(Date.class)))
                 .thenReturn(pointsEntries);
+
+        when(pointsEntryRepo.findByExpiryDateBetweenOrderByExpiryDateAsc(any(Date.class), any(Date.class)))
+                .thenReturn(new ArrayList<PointsEntry>());
     }
 
     @Test
@@ -129,6 +131,13 @@ public class PointsEntryServiceTest {
         assertTrue(ex.getMessage().contains(PointsEntryExceptionMessages.POINT_ENTRY_NOT_FOUND));
 
         verify(pointsEntryRepo, times(0)).save(any(PointsEntry.class));
+    }
+
+    @Test
+    public void getSoonToExpirePointsEntries_ReturnsEmptyListWhenNothingExpiresSoon() {
+        List<PointsEntry> pointsEntries = pointsEntryService.getSoonToExpirePointsEntries();
+
+        assertEquals(0, pointsEntries.size());
     }
 
     @Test
