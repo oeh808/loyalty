@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
-                .requestMatchers("/orders/**").authenticated()
+                .requestMatchers("/orders/**","/refunds/**").authenticated()
                 .requestMatchers("/transactions/**").authenticated()
                 .requestMatchers("/error").permitAll());
         http
