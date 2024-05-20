@@ -46,7 +46,6 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         /*
@@ -65,8 +64,8 @@ public class SecurityConfig {
                 .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
                 .requestMatchers("/orders/**").authenticated()
-                .requestMatchers("/error").permitAll()
-        );
+                .requestMatchers("/transactions/**").authenticated()
+                .requestMatchers("/error").permitAll());
         http
                 .csrf(AbstractHttpConfigurer::disable);
         http.httpBasic(Customizer.withDefaults());
