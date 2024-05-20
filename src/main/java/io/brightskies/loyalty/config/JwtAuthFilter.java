@@ -44,15 +44,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         userName = jwtUtil.extractUsername(jwtToken) ;
 
         if (userName!=null && SecurityContextHolder.getContext().getAuthentication() == null){
+            try {
+                User user =  userRepository.findUserByEmail(userName).orElseThrow(()-> new ResourceNotFoundException("cutumear with email [%s] not found".formatted(userName)));
+                if (user == null){
+                    filterChain.doFilter(request,response);
+                    return;
+                }
+                if(jwtUtil.validateToken(jwtToken, user)){
 
-            User user =  userRepository.findUserByEmail(userName).orElseThrow(()-> new ResourceNotFoundException("cutumear with email [%s] not found".formatted(userName)));
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(user, null, user.mapRolesToAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
 
-            if(jwtUtil.validateToken(jwtToken, user)){
+            }catch (Exception ex){
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write(ex.getMessage());
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(user, null, user.mapRolesToAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                return;
             }
 
         }
