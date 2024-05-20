@@ -9,6 +9,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import io.brightskies.loyalty.customer.entity.Customer;
+import io.brightskies.loyalty.customer.service.CustomerService;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryExceptionMessages;
@@ -17,9 +18,11 @@ import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 @Service
 public class PointsEntryServiceImpl implements PointsEntryService {
     private PointsEntryRepo pointsEntryRepo;
+    private CustomerService customerService;
 
-    public PointsEntryServiceImpl(PointsEntryRepo pointsEntryRepo) {
+    public PointsEntryServiceImpl(PointsEntryRepo pointsEntryRepo, CustomerService customerService) {
         this.pointsEntryRepo = pointsEntryRepo;
+        this.customerService = customerService;
     }
 
     @Override
@@ -67,7 +70,9 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     }
 
     @Override
-    public List<PointsEntry> getSoonToExpirePointsEntries(Customer customer) {
+    public List<PointsEntry> getSoonToExpirePointsEntries(String phoneNumber) {
+        Customer customer = customerService.getCustomer(phoneNumber);
+        
         long today = Calendar.getInstance().getTimeInMillis();
         Date todayDate = new Date(today);
         // FIXME: Figure out what an appropriate numbers of time to add would be

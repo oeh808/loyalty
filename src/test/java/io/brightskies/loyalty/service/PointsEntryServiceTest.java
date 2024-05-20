@@ -26,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import io.brightskies.loyalty.customer.entity.Customer;
+import io.brightskies.loyalty.customer.service.CustomerService;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryExceptionMessages;
@@ -40,13 +41,16 @@ public class PointsEntryServiceTest {
     static class ServiceTestConifg {
         @Bean
         @Autowired
-        PointsEntryService service(PointsEntryRepo pointsEntryRepo) {
-            return new PointsEntryServiceImpl(pointsEntryRepo);
+        PointsEntryService service(PointsEntryRepo pointsEntryRepo, CustomerService customerService) {
+            return new PointsEntryServiceImpl(pointsEntryRepo, customerService);
         }
     }
 
     @MockBean
     private PointsEntryRepo pointsEntryRepo;
+
+    @MockBean
+    private CustomerService customerService;
 
     @Autowired
     private PointsEntryService pointsEntryService;
@@ -68,6 +72,8 @@ public class PointsEntryServiceTest {
 
     @BeforeEach
     public void setUpMocks() {
+        when(customerService.getCustomer(customer.getPhoneNumber())).thenReturn(customer);
+
         when(pointsEntryRepo.save(pointsEntry)).thenReturn(pointsEntry);
 
         when(pointsEntryRepo.findById(pointsEntry.getId())).thenReturn(Optional.of(pointsEntry));
@@ -136,7 +142,7 @@ public class PointsEntryServiceTest {
 
     @Test
     public void getSoonToExpirePointsEntries_ReturnsEmptyListWhenNothingExpiresSoon() {
-        List<PointsEntry> pointsEntries = pointsEntryService.getSoonToExpirePointsEntries(customer);
+        List<PointsEntry> pointsEntries = pointsEntryService.getSoonToExpirePointsEntries(customer.getPhoneNumber());
 
         assertEquals(0, pointsEntries.size());
     }
