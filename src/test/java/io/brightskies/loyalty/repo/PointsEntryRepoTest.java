@@ -20,7 +20,6 @@ import io.brightskies.loyalty.customer.repo.CustomerRepo;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 
-// FIXME: Add test for findByExpiryDateBetween
 @ActiveProfiles("test")
 @DataJpaTest
 public class PointsEntryRepoTest {
@@ -87,5 +86,16 @@ public class PointsEntryRepoTest {
 
         assertEquals(sortedPointsEntries,
                 pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(customer, new Date(today)));
+    }
+
+    @Test
+    public void findByExpiryDateBetweenOrderByExpiryDateAsc_ReturnsListOfExpiryDatesBetweenTwoDates() {
+        List<PointsEntry> sortedPointsEntries = new ArrayList<>();
+        sortedPointsEntries.add(pointsEntry3);
+        sortedPointsEntries.add(pointsEntry2);
+
+        assertEquals(sortedPointsEntries,
+                pointsEntryRepo.findByExpiryDateBetweenOrderByExpiryDateAsc(pointsEntry3.getExpiryDate(),
+                        pointsEntry2.getExpiryDate()));
     }
 }
