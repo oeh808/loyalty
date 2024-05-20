@@ -19,17 +19,19 @@ import lombok.Getter;
 @Subselect("select * from CUSTOMER_TRANSACTION")
 public class CustomerTransaction {
     @Id
-    private long transactionId;
+    private String transactionId;
 
     private Date transactionDate;
 
     private float moneyExchanged;
 
-    private float pointsExchanged;
+    private int pointsExchanged;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerId")
     private Customer customer;
 
     private String transactionType;
+
+    private int pointsEarned;
 }

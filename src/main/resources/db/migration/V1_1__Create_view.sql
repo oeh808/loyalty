@@ -1,5 +1,6 @@
-CREATE OR REPLACE VIEW CUSTOMER_TRANSACTION AS
+CREATE VIEW CUSTOMER_TRANSACTION AS
 SELECT
+    UUID() AS transaction_id,
     orders.order_date AS transaction_date,
     orders.money_spent AS money_exchanged,
     orders.points_spent AS points_exchanged,
@@ -9,6 +10,7 @@ SELECT
 FROM orders
 UNION ALL
 SELECT
+    UUID() AS transaction_id,
     refund.refund_date AS transaction_date,
     refund.money_refunded AS money_exchanged,
     refund.points_refunded AS points_exchanged,
