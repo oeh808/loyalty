@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import io.brightskies.loyalty.customer.entity.Customer;
@@ -45,7 +46,10 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     @Override
     public List<PointsEntry> getNonExpiredPointsEntriesByCustomer(Customer customer) {
         long today = Calendar.getInstance().getTimeInMillis();
-        return pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(customer, new Date(today));
+        Date yesterday = new Date(today);
+        yesterday = new Date(DateUtils.addDays(yesterday, -1).getTime());
+
+        return pointsEntryRepo.findNonExpiredPointsEntriesByCustomer(customer, yesterday);
     }
 
     @Override
