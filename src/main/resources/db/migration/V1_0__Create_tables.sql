@@ -56,7 +56,6 @@ create table refund (
 
 create table refund_products_refunded (
     quantity integer,
-    refunded_quantity integer,
     product_id bigint,
     refund_id bigint not null
 ) engine = InnoDB;
@@ -91,7 +90,7 @@ alter table order_ordered_products
 add constraint UK_bqms2210042dliwb5tfifbt4d unique (order_id, product_id);
 
 alter table refund_products_refunded
-add constraint UK_cy5x2q0jiavlh750dlvod6pcw unique (product_id);
+add constraint UK_cy5x2q0jiavlh750dlvod6pcw unique (product_id, refund_id);
 
 alter table users
 add constraint UK_6dotkott2kjsp8vw4d0m25fb7 unique (email);
