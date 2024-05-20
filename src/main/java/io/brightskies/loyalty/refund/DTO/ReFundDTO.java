@@ -1,12 +1,9 @@
 package io.brightskies.loyalty.refund.DTO;
 
-import io.brightskies.loyalty.order.OrderedProduct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

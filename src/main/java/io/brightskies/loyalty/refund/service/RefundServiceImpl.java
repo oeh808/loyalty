@@ -25,7 +25,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 
@@ -58,7 +57,7 @@ public class RefundServiceImpl implements RefundService {
         // chcek if the order is already refunded
         List<OrderedProduct> orderedProducts = order.getOrderedProducts();
 
-        List<Long> productIds = orderedProducts.stream().map(OrderedProduct::getProduct).map(Product::getId).collect(Collectors.toList());
+        List<Long> productIds = orderedProducts.stream().map(OrderedProduct::getProduct).map(Product::getId).toList();
         float totalRefundedMony = 0;
         float AlreadyRefunded = 0;
         List<RefundedProduct> refundedProducts = new ArrayList<>();
@@ -107,7 +106,7 @@ public class RefundServiceImpl implements RefundService {
 
 
         // return points to customer
-        boolean pointsReturned = false;
+
         int shouldRefund = pointsRefunded - pointsReduction;
         int actualPointsRefunded = 0;
 
@@ -117,15 +116,15 @@ public class RefundServiceImpl implements RefundService {
             if (shouldRefund == 0) {
                 break;
             }
-            if (pointsEntry.getNumOfPoints() > 0 && -1*(shouldRefund) > pointsEntry.getNumOfPoints()) {
-                actualPointsRefunded+=pointsEntry.getNumOfPoints();
-                shouldRefund-=pointsEntry.getNumOfPoints();
+            if (pointsEntry.getNumOfPoints() > 0 && -1 * (shouldRefund) > pointsEntry.getNumOfPoints()) {
+                actualPointsRefunded += pointsEntry.getNumOfPoints();
+                shouldRefund -= pointsEntry.getNumOfPoints();
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), 0);
 
-            }else{
-                actualPointsRefunded+=shouldRefund;
-                pointsEntryService.updatePointsInEntry(pointsEntry.getId(), pointsEntry.getNumOfPoints()+shouldRefund);
-                shouldRefund=0;
+            } else {
+                actualPointsRefunded += shouldRefund;
+                pointsEntryService.updatePointsInEntry(pointsEntry.getId(), pointsEntry.getNumOfPoints() + shouldRefund);
+                shouldRefund = 0;
 
             }
 
@@ -133,35 +132,35 @@ public class RefundServiceImpl implements RefundService {
         List<PointsEntry> customerPointsEntries = pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer);
         PointsEntry pointsEntry;
 
-        if (shouldRefund!=0 && customerPointsEntries.isEmpty()) {
+        if (shouldRefund != 0 && customerPointsEntries.isEmpty()) {
             Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
             DateUtils.addMonths(pointsExpiryDate, pointsConstants.MONTHS_UNTIL_EXPIRY);
             actualPointsRefunded = max(shouldRefund, 0);
             pointsEntry = new PointsEntry(0, actualPointsRefunded, pointsExpiryDate, customer, false);
             pointsEntry.setCustomer(customer);
             pointsEntryService.createPointsEntry(pointsEntry);
-        } else if (shouldRefund!=0 && (shouldRefund) >= 0) {
+        } else if (shouldRefund != 0 && (shouldRefund) >= 0) {
 
             System.out.println(" refund first  pocket: ");
             actualPointsRefunded = shouldRefund;
             pointsEntryService.updatePointsInEntry(customerPointsEntries.get(0).getId(), customerPointsEntries.get(0).getNumOfPoints() + actualPointsRefunded);
-        } else if (shouldRefund!=0){
+        } else if (shouldRefund != 0) {
             for (PointsEntry customerPointsEntry : customerPointsEntries) {
-                if(shouldRefund==0){
+                if (shouldRefund == 0) {
                     break;
                 }
-                if (customerPointsEntry.getNumOfPoints() > 0 && -1*(shouldRefund) > customerPointsEntry.getNumOfPoints()) {
-                    actualPointsRefunded+=customerPointsEntry.getNumOfPoints();
-                    shouldRefund-=customerPointsEntry.getNumOfPoints();
+                if (customerPointsEntry.getNumOfPoints() > 0 && -1 * (shouldRefund) > customerPointsEntry.getNumOfPoints()) {
+                    actualPointsRefunded += customerPointsEntry.getNumOfPoints();
+                    shouldRefund -= customerPointsEntry.getNumOfPoints();
                     pointsEntryService.updatePointsInEntry(customerPointsEntry.getId(), 0);
 
-                }else{
-                        actualPointsRefunded+=shouldRefund;
+                } else {
+                    actualPointsRefunded += shouldRefund;
 
                     System.out.println(" refund  pocket: ");
-                     pointsEntryService.updatePointsInEntry(customerPointsEntry.getId(),customerPointsEntry.getNumOfPoints()+shouldRefund);
+                    pointsEntryService.updatePointsInEntry(customerPointsEntry.getId(), customerPointsEntry.getNumOfPoints() + shouldRefund);
 
-                    shouldRefund=0;
+                    shouldRefund = 0;
                 }
             }
         }
