@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Log4j2
 @RestController
 @Tag(name = "Products", description = "Controller for handling mappings for products")
 @SecurityRequirement(name = "Bearer Token")
@@ -43,6 +45,7 @@ public class ProductController {
         @PostMapping()
         @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Must conform to required properties of ProductCreationDto")
         public Product createProduct(@Valid @RequestBody ProductCreationDto dto) {
+                log.info("Recieved: POST request to /products");
                 Product product = productMapper.toProduct(dto);
                 return productService.createProduct(product);
         }
@@ -52,6 +55,7 @@ public class ProductController {
         @GetMapping("/{id}")
         public Product getProduct(
                         @Parameter(in = ParameterIn.PATH, name = "id", description = "Product ID") @PathVariable long id) {
+                log.info("Recieved: GET request to /products/" + id);
                 return productService.getProduct(id);
         }
 
@@ -59,6 +63,7 @@ public class ProductController {
                         "\n\n Returns a list of products.", summary = "Get All Products")
         @GetMapping()
         public List<Product> getAllProducts() {
+                log.info("Recieved: GET request to /products");
                 return productService.getAllProducts();
         }
 
@@ -71,6 +76,7 @@ public class ProductController {
         public Product updateProduct(
                         @Parameter(in = ParameterIn.PATH, name = "id", description = "Product ID") @PathVariable long id,
                         @RequestBody ProductUpdatingDto dto) {
+                log.info("Recieved: PUT request to /products/" + id);
                 Product product = productMapper.toProduct(dto);
                 return productService.updateProduct(id, product);
         }
@@ -80,6 +86,7 @@ public class ProductController {
         @DeleteMapping("/{id}")
         public String deleteProduct(
                         @Parameter(in = ParameterIn.PATH, name = "id", description = "Product ID") @PathVariable long id) {
+                log.info("Recieved: DELETE request to /products/" + id);
                 productService.deleteProduct(id);
                 return "Product deleted successfully";
         }

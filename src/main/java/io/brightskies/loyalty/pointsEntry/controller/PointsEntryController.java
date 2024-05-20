@@ -11,12 +11,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Log4j2
 @RestController
 @Tag(name = "Points Entries", description = "Controller for handling mappings for points entries")
 @RequestMapping("/points")
@@ -34,6 +36,7 @@ public class PointsEntryController {
     @GetMapping("/{phoneNumber}")
     public List<PointsEntryReadingDto> getSoonToExpirePointEntries(
             @Parameter(in = ParameterIn.PATH, name = "phoneNumber", description = "Phone Number") @PathVariable String phoneNumber) {
+        log.info("Recieved: GET request to /points/" + phoneNumber);
         List<PointsEntry> pointsEntriesSoonToExpire = pointsEntryService.getSoonToExpirePointsEntries(phoneNumber);
 
         return pointsEntryMapper.toDto(pointsEntriesSoonToExpire);
