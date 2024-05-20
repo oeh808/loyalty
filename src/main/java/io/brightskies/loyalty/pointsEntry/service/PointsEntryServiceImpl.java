@@ -73,7 +73,7 @@ public class PointsEntryServiceImpl implements PointsEntryService {
         // FIXME: Figure out what an appropriate numbers of time to add would be
         Date laterDate = new Date(DateUtils.addMonths(todayDate, 1).getTime());
 
-        return pointsEntryRepo.findByExpiryDateBetween(todayDate, laterDate);
+        return pointsEntryRepo.findByExpiryDateBetweenOrderByExpiryDateAsc(todayDate, laterDate);
     }
 
     @Override

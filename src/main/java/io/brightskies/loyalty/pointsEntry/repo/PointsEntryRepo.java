@@ -17,6 +17,6 @@ public interface PointsEntryRepo extends JpaRepository<PointsEntry, Long> {
             " ORDER BY pe.expiryDate ASC")
     List<PointsEntry> findNonExpiredPointsEntriesByCustomer(Customer customer, Date date);
 
-    List<PointsEntry> findByExpiryDateBetween(Date date1, Date date2);
+    List<PointsEntry> findByExpiryDateBetweenOrderByExpiryDateAsc(Date date1, Date date2);
 
 }
