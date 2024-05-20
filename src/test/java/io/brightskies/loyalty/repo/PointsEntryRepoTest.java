@@ -20,6 +20,7 @@ import io.brightskies.loyalty.customer.repo.CustomerRepo;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 
+// FIXME: Add test for findByExpiryDateBetween
 @ActiveProfiles("test")
 @DataJpaTest
 public class PointsEntryRepoTest {

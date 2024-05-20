@@ -67,6 +67,16 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     }
 
     @Override
+    public List<PointsEntry> getSoonToExpirePointsEntries() {
+        long today = Calendar.getInstance().getTimeInMillis();
+        Date todayDate = new Date(today);
+        // FIXME: Figure out what an appropriate numbers of time to add would be
+        Date laterDate = new Date(DateUtils.addMonths(todayDate, 1).getTime());
+
+        return pointsEntryRepo.findByExpiryDateBetween(todayDate, laterDate);
+    }
+
+    @Override
     public void deletePointsEntry(long id) {
         Optional<PointsEntry> opPointsEntry = pointsEntryRepo.findById(id);
 

@@ -33,6 +33,7 @@ import io.brightskies.loyalty.pointsEntry.repo.PointsEntryRepo;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryServiceImpl;
 
+//FIXME: Add test for getSoonToExpirePointsEntries
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class PointsEntryServiceTest {
