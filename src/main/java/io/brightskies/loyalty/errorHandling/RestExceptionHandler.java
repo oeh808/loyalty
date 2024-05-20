@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import io.brightskies.loyalty.customer.exception.CustomerException;
 import io.brightskies.loyalty.order.exception.OrderException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.product.exception.ProductException;
@@ -43,6 +44,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleOrderException(OrderException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(CustomerException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleCustomerException(CustomerException ex) {
         return new ErrorResponse(ex.getMessage());
     }
 
