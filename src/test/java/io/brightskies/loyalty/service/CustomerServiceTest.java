@@ -167,7 +167,7 @@ public class CustomerServiceTest {
                 () -> {
                     customerService.deleteCustomer(customer.getId() - 1);
                 });
-        assertTrue(ex.getMessage().contains(CustomerExceptionMessages.CUSTOMER_NOT_FOUND_ID));
+        assertTrue(ex.getMessage().contains(CustomerExceptionMessages.CUSTOMER_NOT_FOUND_PHONE_NUMBER));
 
         verify(customerRepo, times(0)).deleteById(anyLong());
     }
