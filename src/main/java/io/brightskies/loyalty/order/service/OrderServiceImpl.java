@@ -24,6 +24,7 @@ import io.brightskies.loyalty.product.exception.ProductException;
 import io.brightskies.loyalty.product.exception.ProductExceptionMessages;
 import io.brightskies.loyalty.product.service.ProductService;
 
+// TODO: Implement logging
 @Service
 public class OrderServiceImpl implements OrderService {
     private OrderRepo orderRepo;
@@ -61,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Date pointsExpiryDate = new Date(Calendar.getInstance().getTime().getTime());
-        System.out.println(pointsConstants.MONTHS_UNTIL_EXPIRY);
+
         pointsExpiryDate = new Date(
                 DateUtils.addMonths(pointsExpiryDate, pointsConstants.MONTHS_UNTIL_EXPIRY).getTime());
         PointsEntry pointsEntry = new PointsEntry(0, 0, pointsExpiryDate, null, false);
