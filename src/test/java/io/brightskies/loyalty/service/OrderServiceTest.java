@@ -46,7 +46,6 @@ import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
 import io.brightskies.loyalty.product.entity.Product;
 import io.brightskies.loyalty.product.service.ProductService;
 
-// FIXME: Update tests to include a test for verifying that pointEntriesRedeemedFrom works as expected
 // FIXME: Update tests to include a test for verifying that invalid products throw an error
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
@@ -105,6 +104,17 @@ public class OrderServiceTest {
 
     @BeforeEach
     public void setUpMocks() {
+        // --- Customer Service ---
+        customer = new Customer(1, "01002936283", 500);
+        doAnswer(invocation -> {
+            return invocation.getArgument(0);
+        }).when(customerService).createCustomer(any(Customer.class));
+
+        when(customerService.getCustomer(customer.getPhoneNumber())).thenReturn(customer);
+        when(customerService.getCustomer(customer.getPhoneNumber() + "0")).thenThrow(CustomerException.class);
+
+        when(customerService.updateCustomerPointsTotal(anyLong(), anyInt())).thenReturn(customer);
+
         // --- PointsEntry Service ---
         pointsEntry1 = new PointsEntry(1, 150, Date.valueOf("2030-05-20"), customer, false);
         pointsEntry2 = new PointsEntry(2, 350, Date.valueOf("2030-06-20"), customer, false);
@@ -118,17 +128,6 @@ public class OrderServiceTest {
         when(pointsEntryService.createPointsEntry(any(PointsEntry.class))).thenReturn(pointsEntry1);
 
         when(pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer)).thenReturn(pointsEntries);
-
-        // --- Customer Service ---
-        customer = new Customer(1, "01002936283", 500);
-        doAnswer(invocation -> {
-            return invocation.getArgument(0);
-        }).when(customerService).createCustomer(any(Customer.class));
-
-        when(customerService.getCustomer(customer.getPhoneNumber())).thenReturn(customer);
-        when(customerService.getCustomer(customer.getPhoneNumber() + "0")).thenThrow(CustomerException.class);
-
-        when(customerService.updateCustomerPointsTotal(anyLong(), anyInt())).thenReturn(customer);
 
         // --- Order Repo ---
         order = new Order(3, orderedProducts, Date.valueOf("2030-04-20"), 300, 300, null, customer, 0);
@@ -241,7 +240,9 @@ public class OrderServiceTest {
         }).when(pointsEntryService).updatePointsInEntry(pointsEntry1.getId(),
                 pointsEntry1.getNumOfPoints() - pointsToSpend);
 
-        orderService.redeemPoints(pointsToSpend, customer);
+        List<PointsEntry> pointsEntriesRedeemedFrom = orderService.redeemPoints(pointsToSpend, customer);
+
+        assertEquals(1, pointsEntriesRedeemedFrom.size());
 
         assertEquals(originalPointsInEntry1 - pointsToSpend, pointsEntry1.getNumOfPoints());
         assertEquals(originalPointsInEntry2, pointsEntry2.getNumOfPoints());
@@ -270,8 +271,9 @@ public class OrderServiceTest {
         }).when(pointsEntryService).updatePointsInEntry(pointsEntry1.getId(),
                 pointsEntry1.getNumOfPoints() - (pointsToSpend + (-originalPointsInNegativeEntry)));
 
-        orderService.redeemPoints(pointsToSpend, customer);
+        List<PointsEntry> pointsEntriesRedeemedFrom = orderService.redeemPoints(pointsToSpend, customer);
 
+        assertEquals(1, pointsEntriesRedeemedFrom.size());
         assertEquals(0, negativePointsEntry.getNumOfPoints());
         assertEquals(originalPointsInEntry1 - (pointsToSpend + (-originalPointsInNegativeEntry)),
                 pointsEntry1.getNumOfPoints());
@@ -281,6 +283,7 @@ public class OrderServiceTest {
     @Test
     public void redeemPoints_SubtractsPointsCorrectlyWhenPointsSpentIsAllPointsEntries() {
         int pointsToSpend = pointsEntry1.getNumOfPoints() + pointsEntry2.getNumOfPoints();
+
         doAnswer(invocation -> {
             pointsEntry1.setNumOfPoints(invocation.getArgument(1));
             return null;
@@ -291,7 +294,9 @@ public class OrderServiceTest {
             return null;
         }).when(pointsEntryService).updatePointsInEntry(pointsEntry2.getId(), 0);
 
-        orderService.redeemPoints(pointsToSpend, customer);
+        List<PointsEntry> pointsEntriesRedeemedFrom = orderService.redeemPoints(pointsToSpend, customer);
+
+        assertEquals(2, pointsEntriesRedeemedFrom.size());
         assertEquals(0, pointsEntry1.getNumOfPoints());
         assertEquals(0, pointsEntry2.getNumOfPoints());
     }
