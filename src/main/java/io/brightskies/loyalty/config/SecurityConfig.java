@@ -65,6 +65,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/generator/**").permitAll()
                 .requestMatchers("/orders/**").authenticated()
                 .requestMatchers("/transactions/**").authenticated()
+                .requestMatchers("/points/**").authenticated()
                 .requestMatchers("/error").permitAll());
         http
                 .csrf(AbstractHttpConfigurer::disable);
