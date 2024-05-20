@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import io.brightskies.loyalty.customer.entity.Customer;
@@ -72,13 +73,27 @@ public class PointsEntryServiceImpl implements PointsEntryService {
     @Override
     public List<PointsEntry> getSoonToExpirePointsEntries(String phoneNumber) {
         Customer customer = customerService.getCustomer(phoneNumber);
-        
+
         long today = Calendar.getInstance().getTimeInMillis();
         Date todayDate = new Date(today);
         // FIXME: Figure out what an appropriate numbers of time to add would be
         Date laterDate = new Date(DateUtils.addMonths(todayDate, 1).getTime());
 
         return pointsEntryRepo.findByExpiryDateBetweenDatesByCustomer(customer, todayDate, laterDate);
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 0 * * *")
+    public void setExpiredPointsEntries() {
+        long today = Calendar.getInstance().getTimeInMillis();
+        Date todayDate = new Date(today);
+
+        List<PointsEntry> expiredPointsEntries = pointsEntryRepo.findByExpiryDateBefore(todayDate);
+
+        for (PointsEntry pointsEntry : expiredPointsEntries) {
+            pointsEntry.setExpired(true);
+            pointsEntryRepo.save(pointsEntry);
+        }
     }
 
     @Override

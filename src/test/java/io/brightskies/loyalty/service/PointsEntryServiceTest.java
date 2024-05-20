@@ -86,6 +86,8 @@ public class PointsEntryServiceTest {
         when(pointsEntryRepo.findByExpiryDateBetweenDatesByCustomer(any(Customer.class), any(Date.class),
                 any(Date.class)))
                 .thenReturn(new ArrayList<PointsEntry>());
+
+        when(pointsEntryRepo.findByExpiryDateBefore(any(Date.class))).thenReturn(pointsEntries);
     }
 
     @Test
@@ -152,6 +154,14 @@ public class PointsEntryServiceTest {
         pointsEntryService.deletePointsEntry(pointsEntry.getId());
 
         verify(pointsEntryRepo, times(1)).deleteById(pointsEntry.getId());
+    }
+
+    @Test
+    public void setExpiredPointsEntries_SetsExpiredToTrue() {
+        pointsEntryService.setExpiredPointsEntries();
+
+        assertTrue(pointsEntry.isExpired());
+        verify(pointsEntryRepo, times(1)).save(pointsEntry);
     }
 
     @Test

@@ -18,5 +18,7 @@ public interface PointsEntryService {
 
     PointsEntry updatePointsInEntry(long id, int points);
 
+    void setExpiredPointsEntries();
+
     void deletePointsEntry(long id);
 }

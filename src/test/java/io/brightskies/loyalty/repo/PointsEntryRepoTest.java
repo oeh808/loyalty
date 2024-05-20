@@ -98,4 +98,12 @@ public class PointsEntryRepoTest {
                 pointsEntryRepo.findByExpiryDateBetweenDatesByCustomer(customer, pointsEntry3.getExpiryDate(),
                         pointsEntry2.getExpiryDate()));
     }
+
+    @Test
+    public void findByExpiryDateBefore_ReturnsListOfExpiredPointsEntries() {
+        List<PointsEntry> expectedList = new ArrayList<>();
+        expectedList.add(pointsEntry4);
+
+        assertEquals(expectedList, pointsEntryRepo.findByExpiryDateBefore(Date.valueOf("2010-03-18")));
+    }
 }
