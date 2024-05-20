@@ -94,16 +94,19 @@ public class ProductServiceImpl implements ProductService {
                 + ") in ProductServiceImpl...");
 
         if (updatedProduct.getName() == null || updatedProduct.getName() == "") {
-            log.info("Updating product name...");
             updatedProduct.setName(originalProduct.getName());
+        } else {
+            log.info("Updating product name...");
         }
         if (updatedProduct.getPrice() <= 0) {
-            log.info("Updating product price...");
             updatedProduct.setPrice(originalProduct.getPrice());
+        } else {
+            log.info("Updating product price...");
         }
         if (updatedProduct.getPointsValue() <= 0) {
-            log.info("Updating product points value...");
             updatedProduct.setPointsValue(originalProduct.getPointsValue());
+        } else {
+            log.info("Updating product points value...");
         }
 
         return updatedProduct;
