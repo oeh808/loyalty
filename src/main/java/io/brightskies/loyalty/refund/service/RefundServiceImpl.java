@@ -191,4 +191,9 @@ public class RefundServiceImpl implements RefundService {
         Refund refund = refundRepo.findById(refundId).orElseThrow(() -> new OrderException("Refund not found"));
         return refund.getProductsRefunded();
     }
+
+    @Override
+    public Refund getRefund(long refundId) {
+        return refundRepo.findById(refundId).orElseThrow(() -> new OrderException("Refund not found"));
+    }
 }

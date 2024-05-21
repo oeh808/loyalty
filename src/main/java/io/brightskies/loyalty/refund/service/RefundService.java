@@ -9,4 +9,5 @@ import java.util.List;
 public interface RefundService {
     Refund createRefund(ReFundDTO reFundDTO);
     List<RefundedProduct> getRefundedProducts(long refundId);
+    Refund getRefund(long refundId);
 }
