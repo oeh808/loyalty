@@ -4,11 +4,12 @@ import java.util.List;
 
 import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.order.OrderedProduct;
+import io.brightskies.loyalty.order.dtos.OrderedProductDto;
 import io.brightskies.loyalty.order.entity.Order;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 
 public interface OrderService {
-    Order placeOrder(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent, String phoneNumber);
+    Order placeOrder(List<OrderedProductDto> orderedProductsDto, float moneySpent, int pointsSpent, String phoneNumber);
 
     Order getOrder(long id);
 
@@ -21,4 +22,6 @@ public interface OrderService {
     List<PointsEntry> redeemPoints(int pointsSpent, Customer customer);
 
     void deleteOrder(long id);
+
+    List<OrderedProduct> retrieveOrderedProducts(List<OrderedProductDto> orderedProductsDto);
 }

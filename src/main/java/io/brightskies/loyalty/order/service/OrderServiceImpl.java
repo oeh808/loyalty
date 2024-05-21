@@ -14,14 +14,14 @@ import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.customer.exception.CustomerException;
 import io.brightskies.loyalty.customer.service.CustomerService;
 import io.brightskies.loyalty.order.OrderedProduct;
+import io.brightskies.loyalty.order.dtos.OrderedProductDto;
 import io.brightskies.loyalty.order.entity.Order;
 import io.brightskies.loyalty.order.exception.OrderException;
 import io.brightskies.loyalty.order.exception.OrderExceptionMessages;
 import io.brightskies.loyalty.order.repo.OrderRepo;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
-import io.brightskies.loyalty.product.exception.ProductException;
-import io.brightskies.loyalty.product.exception.ProductExceptionMessages;
+import io.brightskies.loyalty.product.entity.Product;
 import io.brightskies.loyalty.product.service.ProductService;
 
 // TODO: Implement logging
@@ -43,11 +43,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order placeOrder(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent,
+    public Order placeOrder(List<OrderedProductDto> orderedProductsDto, float moneySpent, int pointsSpent,
             String phoneNumber) {
-        if (!productsExist(orderedProducts)) {
-            throw new ProductException(ProductExceptionMessages.PRODUCT_NOT_FOUND);
-        }
+        List<OrderedProduct> orderedProducts;
+        orderedProducts = retrieveOrderedProducts(orderedProductsDto);
 
         Customer customer;
         try {
@@ -193,15 +192,16 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // --- Helper functions ---
-    private boolean productsExist(List<OrderedProduct> orderedProducts) {
-        for (OrderedProduct orderedProduct : orderedProducts) {
-            try {
-                productService.getProduct(orderedProduct.getProduct().getId());
-            } catch (ProductException e) {
-                return false;
-            }
+    @Override
+    public List<OrderedProduct> retrieveOrderedProducts(List<OrderedProductDto> orderedProductsDto) {
+        List<OrderedProduct> orderedProducts = new ArrayList<>();
+        for (OrderedProductDto orderedProductDto : orderedProductsDto) {
+            Product product = productService.getProduct(orderedProductDto.productId());
+            OrderedProduct orderedProduct = new OrderedProduct(product, orderedProductDto.quantity(), 0);
+
+            orderedProducts.add(orderedProduct);
         }
-        return true;
+
+        return orderedProducts;
     }
 }

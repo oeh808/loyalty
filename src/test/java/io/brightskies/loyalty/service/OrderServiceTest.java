@@ -35,6 +35,7 @@ import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.customer.exception.CustomerException;
 import io.brightskies.loyalty.customer.service.CustomerService;
 import io.brightskies.loyalty.order.OrderedProduct;
+import io.brightskies.loyalty.order.dtos.OrderedProductDto;
 import io.brightskies.loyalty.order.entity.Order;
 import io.brightskies.loyalty.order.exception.OrderException;
 import io.brightskies.loyalty.order.exception.OrderExceptionMessages;
@@ -89,6 +90,7 @@ public class OrderServiceTest {
     private static OrderedProduct orderedProduct1;
     private static OrderedProduct orderedProduct2;
     private static List<OrderedProduct> orderedProducts;
+    private static List<OrderedProductDto> orderedProductsDto;
 
     private static Order order;
     private static List<Order> orders;
@@ -100,6 +102,12 @@ public class OrderServiceTest {
         orderedProducts = new ArrayList<>();
         orderedProducts.add(orderedProduct1);
         orderedProducts.add(orderedProduct2);
+
+        orderedProductsDto = new ArrayList<>();
+        orderedProductsDto
+                .add(new OrderedProductDto(orderedProduct1.getProduct().getId(), orderedProduct1.getQuantity()));
+        orderedProductsDto
+                .add(new OrderedProductDto(orderedProduct2.getProduct().getId(), orderedProduct2.getQuantity()));
     }
 
     @BeforeEach
@@ -114,6 +122,10 @@ public class OrderServiceTest {
         when(customerService.getCustomer(customer.getPhoneNumber() + "0")).thenThrow(CustomerException.class);
 
         when(customerService.updateCustomerPointsTotal(anyLong(), anyInt())).thenReturn(customer);
+
+        // --- Product Service ---
+        when(productService.getProduct(orderedProduct1.getProduct().getId())).thenReturn(orderedProduct1.getProduct());
+        when(productService.getProduct(orderedProduct2.getProduct().getId())).thenReturn(orderedProduct2.getProduct());
 
         // --- PointsEntry Service ---
         pointsEntry1 = new PointsEntry(1, 150, Date.valueOf("2030-05-20"), customer, false);
@@ -147,7 +159,7 @@ public class OrderServiceTest {
 
     @Test
     public void placeOrder_AddsACustomerWhenPhoneNumberIsNotRegistered() {
-        orderService.placeOrder(orderedProducts, 0, 0,
+        orderService.placeOrder(orderedProductsDto, 0, 0,
                 customer.getPhoneNumber() + "0");
         verify(customerService, times(1)).createCustomer(any(Customer.class));
     }
@@ -156,7 +168,7 @@ public class OrderServiceTest {
     public void placeOrder_ThrowsErrorWhenCustomerTriesToRedeemMorePointsThanTheyHave() {
         OrderException ex = assertThrows(OrderException.class,
                 () -> {
-                    orderService.placeOrder(orderedProducts, 0, customer.getTotalPoints() + 1,
+                    orderService.placeOrder(orderedProductsDto, 0, customer.getTotalPoints() + 1,
                             customer.getPhoneNumber());
                 });
         assertTrue(ex.getMessage().contains(OrderExceptionMessages.NOT_ENOUGH_POINTS));
@@ -164,7 +176,7 @@ public class OrderServiceTest {
 
     @Test
     public void placeOrder_DoesNotRedeemPointsWhenPointsSpentIsMoreThanZero() {
-        orderService.placeOrder(orderedProducts, 1, 0, customer.getPhoneNumber());
+        orderService.placeOrder(orderedProductsDto, 1, 0, customer.getPhoneNumber());
         OrderService orderServiceSpy = Mockito.spy(orderService);
 
         verify(orderServiceSpy, times(0)).redeemPoints(anyInt(), any(Customer.class));
@@ -172,7 +184,7 @@ public class OrderServiceTest {
 
     @Test
     public void placeOrder_DoesNotAcquirePointsWhenMoneySpentIsMoreThanZero() {
-        orderService.placeOrder(orderedProducts, 0, 1, customer.getPhoneNumber());
+        orderService.placeOrder(orderedProductsDto, 0, 1, customer.getPhoneNumber());
         OrderService orderServiceSpy = Mockito.spy(orderService);
 
         verify(orderServiceSpy, times(0)).calculatePointsEarned(anyList(), anyFloat(), anyInt());
@@ -180,7 +192,7 @@ public class OrderServiceTest {
 
     @Test
     public void placeOrder_ReturnsCreatedOrderAndUpdatesCustomerAndPointEntry() {
-        Order newOrder = orderService.placeOrder(orderedProducts, order.getMoneySpent(), order.getPointsSpent(),
+        Order newOrder = orderService.placeOrder(orderedProductsDto, order.getMoneySpent(), order.getPointsSpent(),
                 customer.getPhoneNumber());
 
         assertEquals(order.getMoneySpent(), newOrder.getMoneySpent());

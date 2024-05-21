@@ -40,7 +40,8 @@ public class OrderController {
         @PostMapping()
         @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Must conform to required properties of OrderCreationDto")
         public Order placeOrder(@Valid @RequestBody OrderCreationDto dto) {
-                return orderService.placeOrder(dto.orderedProducts(), dto.moneySpent(), dto.pointsSpent(),
+
+                return orderService.placeOrder(dto.orderedProductsDto(), dto.moneySpent(), dto.pointsSpent(),
                                 dto.phoneNumber());
         }
 
