@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.brightskies.loyalty.transaction.dto.CustomerTransactionReadingDto;
-import io.brightskies.loyalty.transaction.mapper.CustomerTransactionMapper;
 import io.brightskies.loyalty.transaction.service.CustomerTransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,12 +22,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/transactions")
 public class CustomerTransactionController {
     private CustomerTransactionService customerTransactionService;
-    private CustomerTransactionMapper customerTransactionMapper;
 
-    public CustomerTransactionController(CustomerTransactionService customerTransactionService,
-            CustomerTransactionMapper customerTransactionMapper) {
+    public CustomerTransactionController(CustomerTransactionService customerTransactionService) {
         this.customerTransactionService = customerTransactionService;
-        this.customerTransactionMapper = customerTransactionMapper;
     }
 
     @Operation(description = "GET endpoint for retrieving all transactions associated with a customer's phone number" +
@@ -37,10 +33,7 @@ public class CustomerTransactionController {
     public List<CustomerTransactionReadingDto> getTransactionsByCustomer(
             @Parameter(in = ParameterIn.PATH, name = "phoneNumber", description = "Phone Number") @PathVariable String phoneNumber) {
         log.info("Recieved: GET request to /transactions/" + phoneNumber);
-        List<CustomerTransactionReadingDto> dtos = customerTransactionMapper
-                .toDto(customerTransactionService.getCustomerTransactionsByCustomer(phoneNumber));
-
-        return dtos;
+        return customerTransactionService.getCustomerTransactionsByCustomer(phoneNumber);
     }
 
 }

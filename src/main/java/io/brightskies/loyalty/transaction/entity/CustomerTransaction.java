@@ -19,7 +19,7 @@ import lombok.Getter;
 @Subselect("select * from CUSTOMER_TRANSACTION")
 public class CustomerTransaction {
     @Id
-    private String transactionId;
+    private String id;
 
     private Date transactionDate;
 
@@ -32,6 +32,8 @@ public class CustomerTransaction {
     private Customer customer;
 
     private String transactionType;
+
+    private long transactionId;
 
     private int pointsEarned;
 }
