@@ -15,6 +15,6 @@ SELECT
     refund.money_refunded AS money_exchanged,
     refund.points_refunded AS points_exchanged,
     refund.customer_id AS customer_id,
-    null AS points_earned,
+    0 AS points_earned,
     "refund" AS transaction_type
 FROM refund;
