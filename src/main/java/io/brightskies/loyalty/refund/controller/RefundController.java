@@ -4,6 +4,8 @@ import io.brightskies.loyalty.refund.DTO.ReFundDTO;
 import io.brightskies.loyalty.refund.entity.Refund;
 import io.brightskies.loyalty.refund.service.RefundService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +22,7 @@ public class RefundController {
     }
 
     @PostMapping
-    public Refund createRefund(@RequestBody ReFundDTO reFundDTO) {
+    public Refund createRefund(@Valid @RequestBody ReFundDTO reFundDTO) {
         return refundService.createRefund(reFundDTO);
     }
 
