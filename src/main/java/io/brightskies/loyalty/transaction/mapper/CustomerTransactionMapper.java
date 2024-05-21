@@ -14,6 +14,7 @@ public class CustomerTransactionMapper {
     public CustomerTransactionReadingDto toDto(CustomerTransaction customerTransaction) {
         CustomerTransactionReadingDto dto = new CustomerTransactionReadingDto(customerTransaction.getTransactionDate(),
                 customerTransaction.getMoneyExchanged(), customerTransaction.getPointsExchanged(),
+                customerTransaction.getTransactionProducts(),
                 customerTransaction.getPointsEarned(), customerTransaction.getTransactionType());
 
         return dto;

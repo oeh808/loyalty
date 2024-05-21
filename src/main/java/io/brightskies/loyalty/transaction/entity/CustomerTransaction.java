@@ -1,11 +1,15 @@
 package io.brightskies.loyalty.transaction.entity;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
 import io.brightskies.loyalty.customer.entity.Customer;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -32,6 +36,10 @@ public class CustomerTransaction {
     private Customer customer;
 
     private String transactionType;
+
+    @Embedded
+    @ElementCollection
+    private List<TransactionProduct> transactionProducts = new ArrayList<>();
 
     private int pointsEarned;
 }

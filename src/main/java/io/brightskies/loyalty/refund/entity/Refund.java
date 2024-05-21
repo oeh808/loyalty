@@ -22,8 +22,7 @@ public class Refund {
     @JoinColumn(name = "customerId")
     Customer customer;
 
-    @Embedded
-    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY)
     private List<RefundedProduct> productsRefunded;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +34,5 @@ public class Refund {
     private int pointsRefunded;
 
     private Date refundDate;
-
 
 }

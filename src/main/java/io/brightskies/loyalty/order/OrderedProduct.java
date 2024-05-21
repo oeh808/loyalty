@@ -1,22 +1,23 @@
 package io.brightskies.loyalty.order;
 
 import io.brightskies.loyalty.product.entity.Product;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.brightskies.loyalty.transaction.entity.TransactionProduct;
+import jakarta.persistence.Entity;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Embeddable
-public class OrderedProduct {
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productId")
-    private Product product;
-    private int quantity;
-    private int refundedQuantity=0;
+@Entity
+public class OrderedProduct extends TransactionProduct {
+    private int refundedQuantity = 0;
+
+    public OrderedProduct(Product product, int quantity, int refundedQuantity) {
+        super(product, quantity);
+        this.refundedQuantity = refundedQuantity;
+    }
+
+    public int getRefundedQuantity() {
+        return refundedQuantity;
+    }
+
+    public void setRefundedQuantity(int refundedQuantity) {
+        this.refundedQuantity = refundedQuantity;
+    }
 }

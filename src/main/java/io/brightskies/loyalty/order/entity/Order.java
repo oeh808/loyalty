@@ -7,8 +7,6 @@ import java.util.List;
 import io.brightskies.loyalty.customer.entity.Customer;
 import io.brightskies.loyalty.order.OrderedProduct;
 import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,8 +32,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Embedded
-    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY)
     private List<OrderedProduct> orderedProducts = new ArrayList<OrderedProduct>();
 
     private Date orderDate;
