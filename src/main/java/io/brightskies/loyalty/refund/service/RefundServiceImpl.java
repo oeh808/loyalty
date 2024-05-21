@@ -185,4 +185,10 @@ public class RefundServiceImpl implements RefundService {
 
         return refund;
     }
+
+    @Override
+    public List<RefundedProduct> getRefundedProducts(long refundId) {
+        Refund refund = refundRepo.findById(refundId).orElseThrow(() -> new OrderException("Refund not found"));
+        return refund.getProductsRefunded();
+    }
 }
