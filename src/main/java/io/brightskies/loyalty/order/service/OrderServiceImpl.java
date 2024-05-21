@@ -23,8 +23,9 @@ import io.brightskies.loyalty.pointsEntry.entity.PointsEntry;
 import io.brightskies.loyalty.pointsEntry.service.PointsEntryService;
 import io.brightskies.loyalty.product.entity.Product;
 import io.brightskies.loyalty.product.service.ProductService;
+import lombok.extern.log4j.Log4j2;
 
-// TODO: Implement logging
+@Log4j2
 @Service
 public class OrderServiceImpl implements OrderService {
     private OrderRepo orderRepo;
@@ -45,9 +46,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order placeOrder(List<OrderedProductDto> orderedProductsDto, float moneySpent, int pointsSpent,
             String phoneNumber) {
+        log.info("Running placeOrder(" + orderedProductsDto.toString() + ", " + moneySpent
+                + ", " + pointsSpent + ", " + phoneNumber + ") in OrderServiceImpl...");
+
         List<OrderedProduct> orderedProducts;
+        log.info("Retrieving ordered products...");
         orderedProducts = retrieveOrderedProducts(orderedProductsDto);
 
+        log.info("Checking if customer phone number is already recorded...");
         Customer customer;
         try {
             customer = customerService.getCustomer(phoneNumber);
@@ -56,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
              * If a customer does not already exist with the given phone number,
              * they are added to the table of customers
              */
+            log.info("Customer not already registered, creating new customer...");
             customer = new Customer(0, phoneNumber, 0);
             customer = customerService.createCustomer(customer);
         }
@@ -71,18 +78,22 @@ public class OrderServiceImpl implements OrderService {
          * the order is rejected
          */
         if (pointsSpent > customer.getTotalPoints()) {
+            log.error("Customer trying to spend: " + pointsSpent + " but only has: " + customer.getTotalPoints()
+                    + " points!");
             throw new OrderException(OrderExceptionMessages.NOT_ENOUGH_POINTS);
         }
 
         // Redeeming points
         List<PointsEntry> pointsEntriesRedeemedFrom = new ArrayList<>();
         if (pointsSpent > 0) {
+            log.info("Redeeming customer points...");
             pointsEntriesRedeemedFrom = redeemPoints(pointsSpent, customer);
             customer.setTotalPoints(customer.getTotalPoints() - pointsSpent);
         }
 
         // Acquiring points
         if (moneySpent > 0) {
+            log.info("Acquiring customer points...");
             int pointsEarned = calculatePointsEarned(orderedProducts, moneySpent, pointsSpent);
             customer.setTotalPoints(customer.getTotalPoints() + pointsEarned);
 
@@ -90,11 +101,14 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // Saving the updated customer and points entry
+        log.info("Updating customer total points...");
         customer = customerService.updateCustomerPointsTotal(customer.getId(), customer.getTotalPoints());
+        log.info("Creating new points entry for order...");
         pointsEntry.setCustomer(customer);
         pointsEntry = pointsEntryService.createPointsEntry(pointsEntry);
 
         // Finally creating the order
+        log.info("Saving order...");
         Order order = new Order(0, orderedProducts, new Date(Calendar.getInstance().getTime().getTime()), moneySpent,
                 pointsSpent, pointsEntriesRedeemedFrom, customer, pointsEntry.getNumOfPoints());
         return orderRepo.save(order);
@@ -102,21 +116,25 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrder(long id) {
+        log.info("Running getOrder(" + id + ") in OrderServiceImpl...");
         Optional<Order> opOrder = orderRepo.findById(id);
         if (opOrder.isPresent()) {
             return opOrder.get();
         } else {
+            log.error("Invalid order id: " + id + "!");
             throw new OrderException(OrderExceptionMessages.ORDER_NOT_FOUND);
         }
     }
 
     @Override
     public List<Order> getAllOrders() {
+        log.info("Running getAllOrders() in OrderServiceImpl...");
         return orderRepo.findAll();
     }
 
     @Override
     public List<Order> getOrdersByCustomer(String phoneNumber) {
+        log.info("Running getOrdersByCustomer(" + phoneNumber + ") in OrderServiceImpl...");
         return orderRepo.findByCustomer_PhoneNumber(phoneNumber);
     }
 
@@ -129,13 +147,19 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public int calculatePointsEarned(List<OrderedProduct> orderedProducts, float moneySpent, int pointsSpent) {
+        log.info("Running calculatePointsEarned(" + orderedProducts.toString() + ", " + moneySpent
+                + ", " + pointsSpent + ") in OrderServiceImpl...");
+
         float pointsConvertedToMoney = pointsSpent * pointsConstants.WORTH_OF_ONE_POINT;
         float ratioOfMoneySpent = moneySpent / (moneySpent + pointsConvertedToMoney);
 
         int pointsEarned = 0;
 
         for (OrderedProduct orderedProduct : orderedProducts) {
+            log.info("Calculating points to be added for the product: " + orderedProduct.getProduct().toString()
+                    + " with quantity: " + orderedProduct.getQuantity());
             int productsPoints = orderedProduct.getProduct().getPointsValue() * orderedProduct.getQuantity();
+            log.info("Adding product points: " + productsPoints + " to total points earned in order.");
 
             pointsEarned += productsPoints * ratioOfMoneySpent;
         }
@@ -145,11 +169,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<PointsEntry> redeemPoints(int pointsSpent, Customer customer) {
+        log.info("Running redeemPoints(" + pointsSpent + ", " + customer.toString() + ") in OrderServiceImpl...");
         List<PointsEntry> pointsEntriesRedeemedFrom = new ArrayList<>();
 
+        log.info("Retrieving unexpired points entries...");
         List<PointsEntry> pointsEntries = pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer);
 
+        log.info("Redeeming points...");
         for (PointsEntry pointsEntry : pointsEntries) {
+            log.info("Checking points entry: " + pointsEntry.toString() + "...");
+            log.info("Points left to redeem: " + pointsSpent);
             // The loop keeps going until either all the point spent are accounted for,
             // or every pointEntry is searched through
             if (pointsSpent == 0) {
@@ -162,8 +191,10 @@ public class OrderServiceImpl implements OrderService {
              * number of points to be redeemed from other entries
              */
             if (points == 0) {
+                log.info("Ignoring entry due to havning zero points...");
                 continue;
             } else if (pointsSpent >= points) {
+                log.info("Setting points in entry to: 0...");
                 pointsSpent -= points;
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), 0);
 
@@ -171,6 +202,7 @@ public class OrderServiceImpl implements OrderService {
                     pointsEntriesRedeemedFrom.add(pointsEntry);
                 }
             } else {
+                log.info("Setting points in entry to: " + points + "...");
                 points -= pointsSpent;
                 pointsSpent = 0;
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), points);
@@ -184,18 +216,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(long id) {
+        log.info("Running deleteOrder(" + id + ") in OrderServiceImpl...");
+        log.info("Checking order id exists...");
         Optional<Order> opOrder = orderRepo.findById(id);
         if (opOrder.isPresent()) {
+            log.info("Deleting order...");
             orderRepo.deleteById(id);
         } else {
+            log.error("Invalid order id: " + id + "!");
             throw new OrderException(OrderExceptionMessages.ORDER_NOT_FOUND);
         }
     }
 
     @Override
     public List<OrderedProduct> retrieveOrderedProducts(List<OrderedProductDto> orderedProductsDto) {
+        log.info("Running retrieveOrderedProducts(" + orderedProductsDto.toString() + ") in OrderServiceImpl...");
         List<OrderedProduct> orderedProducts = new ArrayList<>();
         for (OrderedProductDto orderedProductDto : orderedProductsDto) {
+            log.info("Retrieving product with id: " + orderedProductDto.productId());
             Product product = productService.getProduct(orderedProductDto.productId());
             OrderedProduct orderedProduct = new OrderedProduct(product, orderedProductDto.quantity(), 0);
 

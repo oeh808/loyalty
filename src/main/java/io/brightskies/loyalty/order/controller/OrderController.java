@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Log4j2
 @RestController
 @Tag(name = "Orders", description = "Controller for handling mappings for orders")
 @RequestMapping("/orders")
@@ -40,6 +42,7 @@ public class OrderController {
         @PostMapping()
         @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Must conform to required properties of OrderCreationDto")
         public Order placeOrder(@Valid @RequestBody OrderCreationDto dto) {
+                log.info("Recieved: POST request to /orders");
 
                 return orderService.placeOrder(dto.orderedProductsDto(), dto.moneySpent(), dto.pointsSpent(),
                                 dto.phoneNumber());
@@ -50,6 +53,7 @@ public class OrderController {
         @GetMapping("/{id}")
         public OrderReadingDto getSingleOrder(
                         @Parameter(in = ParameterIn.PATH, name = "id", description = "Order ID") @PathVariable long id) {
+                log.info("Recieved: GET request to /orders/" + id);
                 return orderMapper.toDto(orderService.getOrder(id));
         }
 
@@ -57,6 +61,7 @@ public class OrderController {
                         "\n\n Returns a list of orders.", summary = "Get All Orders")
         @GetMapping()
         public List<OrderReadingDto> getAllOrders() {
+                log.info("Recieved: GET request to /orders");
                 return orderMapper.toDtos(orderService.getAllOrders());
         }
 
@@ -65,6 +70,7 @@ public class OrderController {
         @GetMapping("/customerOrders/{phoneNumber}")
         public List<OrderReadingDto> getAllOrdersFromCustomer(
                         @Parameter(in = ParameterIn.PATH, name = "phoneNumber", description = "Phone Number") @PathVariable String phoneNumber) {
+                log.info("Recieved: GET request to /orders/customerOrders/" + phoneNumber);
                 return orderMapper.toDtos(orderService.getOrdersByCustomer(phoneNumber));
         }
 
@@ -73,6 +79,7 @@ public class OrderController {
         @DeleteMapping("/{id}")
         public String deleteOrder(
                         @Parameter(in = ParameterIn.PATH, name = "id", description = "Order ID") @PathVariable long id) {
+                log.info("Recieved: DELETE request to /orders/" + id);
                 orderService.deleteOrder(id);
                 return "Order deleted successfully";
         }
