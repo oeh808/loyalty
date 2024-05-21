@@ -3,6 +3,7 @@ package io.brightskies.loyalty.refund.controller;
 import io.brightskies.loyalty.refund.DTO.ReFundDTO;
 import io.brightskies.loyalty.refund.entity.Refund;
 import io.brightskies.loyalty.refund.service.RefundService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -21,7 +22,10 @@ public class RefundController {
         this.refundService = refundService;
     }
 
+    @Operation(description = "POST endpoint for creating a refund" +
+            "\n\n Returns the refund created.", summary = "Create a Refund")
     @PostMapping
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Must conform to required properties of ReFundDTO")
     public Refund createRefund(@Valid @RequestBody ReFundDTO reFundDTO) {
         return refundService.createRefund(reFundDTO);
     }
