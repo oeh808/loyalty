@@ -20,6 +20,8 @@ import io.brightskies.loyalty.refund.exception.RefundException;
 import io.brightskies.loyalty.refund.exception.RefundExceptionMessages;
 import io.brightskies.loyalty.refund.repo.RefundRepo;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
+@Log4j2
 @Service
 @AllArgsConstructor
 public class RefundServiceImpl implements RefundService {
@@ -40,7 +44,11 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public Refund createRefund(ReFundDTO reFundDTO) {
+        log.info("Running createRefund(" + reFundDTO.toString() + ") in RefundServiceImpl...");
+        log.info("Retrieving customer...");
         Customer customer = customerService.getCustomer(reFundDTO.getPhoneNumber());
+
+        log.info("Retrieving order...");
         Order order = orderService.getOrder(reFundDTO.getOrderId());
 
         List<RefundedProduct> refundedProducts = validateOrder(order, reFundDTO.getProductRefund());
@@ -53,14 +61,20 @@ public class RefundServiceImpl implements RefundService {
     }
 
     private List<RefundedProduct> validateOrder(Order order, List<ProductRefundDTO> productRefunds) {
+        log.info("Running validateOrder(" + order.toString() + ", "
+                + productRefunds.toString() + ") in RefundServiceImpl...");
         List<RefundedProduct> refundedProducts = new ArrayList<>();
         List<OrderedProduct> orderedProducts = order.getOrderedProducts();
         List<Long> productIds = orderedProducts.stream()
                 .map(OrderedProduct::getProduct)
                 .map(Product::getId)
                 .toList();
+        log.info("Validating that products exist...");
         for (ProductRefundDTO productRefund : productRefunds) {
+            log.info("Validating product with id: " + productRefund.getProductId() + "...");
+
             if (!productIds.contains(productRefund.getProductId())) {
+                log.error("Invalid product id: " + productRefund.getProductId() + "!");
                 throw new OrderException(OrderExceptionMessages.PRODUCT_NOT_FOUND_IN_ORDER);
             }
             OrderedProduct orderedProduct = orderedProducts.stream()
@@ -69,7 +83,11 @@ public class RefundServiceImpl implements RefundService {
                     .orElseThrow(() -> new OrderException(OrderExceptionMessages.PRODUCT_NOT_FOUND_IN_ORDER));
             orderedProduct.setRefundedQuantity(orderedProduct.getRefundedQuantity() + productRefund.getQuantity());
             refundedProducts.add(new RefundedProduct(orderedProduct.getProduct(), productRefund.getQuantity()));
+
             if (productRefund.getQuantity() > (orderedProduct.getQuantity() - orderedProduct.getRefundedQuantity())) {
+                log.error("The ordered product already has been refunded a quantity of: "
+                        + orderedProduct.getRefundedQuantity() +
+                        " while the quantity requested to be refunded is: " + productRefund.getQuantity() + "!");
                 throw new OrderException(OrderExceptionMessages.ORDER_ALREADY_REFUNDED);
             }
         }
@@ -77,6 +95,9 @@ public class RefundServiceImpl implements RefundService {
     }
 
     private Refund calculateAndCreateRefund(Order order, Customer customer, List<RefundedProduct> refundedProducts) {
+        log.info("Running calculateAndCreateRefund(" + order.toString() + ", "
+                + customer.toString() + ", " +
+                refundedProducts.toString() + ") in RefundServiceImpl...");
         float totalRefundedMoney = calculateTotalRefundedMoney(refundedProducts);
         float alreadyRefunded = calculateAlreadyRefunded(order);
         float moneyRefunded = 0;
@@ -95,24 +116,33 @@ public class RefundServiceImpl implements RefundService {
             moneyRefunded = totalRefundedMoney - pointsRefunded * pointsConstants.WORTH_OF_ONE_POINT;
             pointsReduction = (int) ((moneyRefunded / order.getMoneySpent()) * order.getPointsEarned());
         }
+
+        log.info("Updating customer total points...");
         int actualPointsRefunded = updateCustomerPoints(order, customer, pointsRefunded - pointsReduction);
         Date refundDate = new Date(Calendar.getInstance().getTime().getTime());
+
+        log.info("Creating refund...");
         return new Refund(0, customer, refundedProducts, order, moneyRefunded, actualPointsRefunded, refundDate);
     }
 
     private float calculateTotalRefundedMoney(List<RefundedProduct> refundedProducts) {
+        log.info("Running calculateTotalRefundedMoney(" + refundedProducts.toString() + ") in RefundServiceImpl...");
         return refundedProducts.stream()
                 .map(rp -> rp.getQuantity() * rp.getProduct().getPrice())
                 .reduce(0f, Float::sum);
     }
 
     private float calculateAlreadyRefunded(Order order) {
+        log.info("Running calculateAlreadyRefunded(" + order.toString() + ") in RefundServiceImpl...");
         return order.getOrderedProducts().stream()
                 .map(op -> op.getRefundedQuantity() * op.getProduct().getPrice())
                 .reduce(0f, Float::sum);
     }
 
     private int updateCustomerPoints(Order order, Customer customer, int pointsToRefund) {
+        log.info("Running updateCustomerPoints(" + order.toString() + ", "
+                + customer.toString() + ", " +
+                pointsToRefund + ") in RefundServiceImpl...");
         int actualPointsRefunded = 0;
         List<PointsEntry> pointsEntries = order.getEntries();
 
@@ -150,6 +180,8 @@ public class RefundServiceImpl implements RefundService {
     }
 
     private int refundRemainingPointsToCustomer(Customer customer, int pointsToRefund) {
+        log.info("Running refundRemainingPointsToCustomer(" + customer.toString() + ", " +
+                pointsToRefund + ") in RefundServiceImpl...");
         List<PointsEntry> customerPointsEntries = pointsEntryService.getNonExpiredPointsEntriesByCustomer(customer);
         int actualPointsRefunded = 0;
 
@@ -189,6 +221,9 @@ public class RefundServiceImpl implements RefundService {
     }
 
     private void updateOrderAndCustomer(Order order, Customer customer, Refund refund) {
+        log.info("Running updateOrderAndCustomer(" + order.toString() + ", "
+                + customer.toString() + ", " +
+                refund.toString() + ") in RefundServiceImpl...");
         order.setOrderedProducts(order.getOrderedProducts());
         orderRepo.save(order);
         refundRepo.save(refund);
@@ -198,14 +233,27 @@ public class RefundServiceImpl implements RefundService {
 
     @Override
     public List<RefundedProduct> getRefundedProducts(long refundId) {
-        Refund refund = refundRepo.findById(refundId)
-                .orElseThrow(() -> new RefundException(RefundExceptionMessages.REFUND_NOT_FOUND));
-        return refund.getProductsRefunded();
+        log.info("Running getRefundedProducts(" + refundId + ") in RefundServiceImpl...");
+
+        Optional<Refund> refund = refundRepo.findById(refundId);
+        if (refund.isPresent()) {
+            return refund.get().getProductsRefunded();
+        } else {
+            log.error("Invalid product id: " + refundId + "!");
+            throw new RefundException(RefundExceptionMessages.REFUND_NOT_FOUND);
+        }
     }
 
     @Override
     public Refund getRefund(long refundId) {
-        return refundRepo.findById(refundId)
-                .orElseThrow(() -> new RefundException(RefundExceptionMessages.REFUND_NOT_FOUND));
+        log.info("Running getRefund(" + refundId + ") in RefundServiceImpl...");
+
+        Optional<Refund> refund = refundRepo.findById(refundId);
+        if (refund.isPresent()) {
+            return refund.get();
+        } else {
+            log.error("Invalid product id: " + refundId + "!");
+            throw new RefundException(RefundExceptionMessages.REFUND_NOT_FOUND);
+        }
     }
 }
