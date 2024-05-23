@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import io.brightskies.loyalty.order.exception.OrderException;
 import io.brightskies.loyalty.pointsEntry.exception.PointsEntryException;
 import io.brightskies.loyalty.product.exception.ProductException;
+import io.brightskies.loyalty.refund.exception.RefundException;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -47,12 +48,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorResponse handleOrderException(OrderException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
     @ExceptionHandler(CustomerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleCustomerException(CustomerException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler(RefundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleRefundException(RefundException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -66,7 +76,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ErrorResponse handleOtherException(CustomerException ex) {
         return new ErrorResponse(ex.getMessage());
     }
-
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(

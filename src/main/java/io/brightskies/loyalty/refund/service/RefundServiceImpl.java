@@ -16,6 +16,8 @@ import io.brightskies.loyalty.refund.DTO.ProductRefundDTO;
 import io.brightskies.loyalty.refund.DTO.ReFundDTO;
 import io.brightskies.loyalty.refund.entity.Refund;
 import io.brightskies.loyalty.refund.entity.RefundedProduct;
+import io.brightskies.loyalty.refund.exception.RefundException;
+import io.brightskies.loyalty.refund.exception.RefundExceptionMessages;
 import io.brightskies.loyalty.refund.repo.RefundRepo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.time.DateUtils;
@@ -25,7 +27,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 
 @Service
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class RefundServiceImpl implements RefundService {
         Customer customer = customerService.getCustomer(reFundDTO.getPhoneNumber());
         Order order = orderService.getOrder(reFundDTO.getOrderId());
 
-        List<RefundedProduct> refundedProducts =validateOrder(order, reFundDTO.getProductRefund());
+        List<RefundedProduct> refundedProducts = validateOrder(order, reFundDTO.getProductRefund());
 
         Refund refund = calculateAndCreateRefund(order, customer, refundedProducts);
 
@@ -78,17 +79,19 @@ public class RefundServiceImpl implements RefundService {
     private Refund calculateAndCreateRefund(Order order, Customer customer, List<RefundedProduct> refundedProducts) {
         float totalRefundedMoney = calculateTotalRefundedMoney(refundedProducts);
         float alreadyRefunded = calculateAlreadyRefunded(order);
-        float moneyRefunded=0;
-        int pointsRefunded=0;
-        int pointsReduction=0;
+        float moneyRefunded = 0;
+        int pointsRefunded = 0;
+        int pointsReduction = 0;
 
         if (alreadyRefunded >= order.getPointsSpent() * pointsConstants.WORTH_OF_ONE_POINT) {
             moneyRefunded = totalRefundedMoney;
             pointsReduction = (int) ((moneyRefunded / order.getMoneySpent()) * order.getPointsEarned());
-        } else if (alreadyRefunded + totalRefundedMoney <= order.getPointsSpent() * pointsConstants.WORTH_OF_ONE_POINT) {
+        } else if (alreadyRefunded + totalRefundedMoney <= order.getPointsSpent()
+                * pointsConstants.WORTH_OF_ONE_POINT) {
             pointsRefunded = (int) (totalRefundedMoney / pointsConstants.WORTH_OF_ONE_POINT);
         } else {
-            pointsRefunded = (int) ((order.getPointsSpent() * pointsConstants.WORTH_OF_ONE_POINT - alreadyRefunded) / pointsConstants.WORTH_OF_ONE_POINT);
+            pointsRefunded = (int) ((order.getPointsSpent() * pointsConstants.WORTH_OF_ONE_POINT - alreadyRefunded)
+                    / pointsConstants.WORTH_OF_ONE_POINT);
             moneyRefunded = totalRefundedMoney - pointsRefunded * pointsConstants.WORTH_OF_ONE_POINT;
             pointsReduction = (int) ((moneyRefunded / order.getMoneySpent()) * order.getPointsEarned());
         }
@@ -119,7 +122,8 @@ public class RefundServiceImpl implements RefundService {
             }
             if (pointsToRefund > 0) {
                 actualPointsRefunded += pointsToRefund;
-                pointsEntryService.updatePointsInEntry(pointsEntry.getId(), pointsEntry.getNumOfPoints() + pointsToRefund);
+                pointsEntryService.updatePointsInEntry(pointsEntry.getId(),
+                        pointsEntry.getNumOfPoints() + pointsToRefund);
                 pointsToRefund = 0;
                 break;
             }
@@ -132,7 +136,8 @@ public class RefundServiceImpl implements RefundService {
                 pointsEntryService.updatePointsInEntry(pointsEntry.getId(), 0);
             } else {
                 actualPointsRefunded += pointsToRefund;
-                pointsEntryService.updatePointsInEntry(pointsEntry.getId(), pointsEntry.getNumOfPoints() + pointsToRefund);
+                pointsEntryService.updatePointsInEntry(pointsEntry.getId(),
+                        pointsEntry.getNumOfPoints() + pointsToRefund);
                 pointsToRefund = 0;
             }
         }
@@ -157,7 +162,8 @@ public class RefundServiceImpl implements RefundService {
         } else if (pointsToRefund > 0) {
             PointsEntry firstEntry = customerPointsEntries.get(0);
             actualPointsRefunded = pointsToRefund;
-            pointsEntryService.updatePointsInEntry(firstEntry.getId(), firstEntry.getNumOfPoints() + actualPointsRefunded);
+            pointsEntryService.updatePointsInEntry(firstEntry.getId(),
+                    firstEntry.getNumOfPoints() + actualPointsRefunded);
         } else {
             for (PointsEntry customerPointsEntry : customerPointsEntries) {
                 if (pointsToRefund == 0) {
@@ -172,7 +178,8 @@ public class RefundServiceImpl implements RefundService {
                     pointsEntryService.updatePointsInEntry(customerPointsEntry.getId(), 0);
                 } else {
                     actualPointsRefunded += pointsToRefund;
-                    pointsEntryService.updatePointsInEntry(customerPointsEntry.getId(), customerPointsEntry.getNumOfPoints() + pointsToRefund);
+                    pointsEntryService.updatePointsInEntry(customerPointsEntry.getId(),
+                            customerPointsEntry.getNumOfPoints() + pointsToRefund);
                     pointsToRefund = 0;
                 }
             }
@@ -185,19 +192,20 @@ public class RefundServiceImpl implements RefundService {
         order.setOrderedProducts(order.getOrderedProducts());
         orderRepo.save(order);
         refundRepo.save(refund);
-        customerService.updateCustomerPointsTotal(customer.getId(), customer.getTotalPoints() + refund.getPointsRefunded());
+        customerService.updateCustomerPointsTotal(customer.getId(),
+                customer.getTotalPoints() + refund.getPointsRefunded());
     }
 
     @Override
     public List<RefundedProduct> getRefundedProducts(long refundId) {
         Refund refund = refundRepo.findById(refundId)
-                .orElseThrow(() -> new OrderException("Refund not found"));
+                .orElseThrow(() -> new RefundException(RefundExceptionMessages.REFUND_NOT_FOUND));
         return refund.getProductsRefunded();
     }
 
     @Override
     public Refund getRefund(long refundId) {
         return refundRepo.findById(refundId)
-                .orElseThrow(() -> new OrderException("Refund not found"));
+                .orElseThrow(() -> new RefundException(RefundExceptionMessages.REFUND_NOT_FOUND));
     }
 }
